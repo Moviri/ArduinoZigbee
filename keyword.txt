@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For ArduinoZigbee
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ArduinoZigbee	KEYWORD1
+Zigbee	KEYWORD1
+ZigbeeDimmableLight KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+poll	KEYWORD2
+end	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
