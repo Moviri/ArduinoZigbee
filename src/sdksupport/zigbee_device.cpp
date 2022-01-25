@@ -13,17 +13,17 @@ extern "C" {
 #endif
 
 zb_af_device_ctx_t dev_ctx;
-zb_af_endpoint_desc_typed_t ep_list[4];
+// zb_af_endpoint_desc_typed_t ep_list[4];
 zb_af_endpoint_desc_t *ep_list_desc[4];
 
 int current_size_ep = 0;
 
 bool add_EP(zb_af_endpoint_desc_t* ep, ep_type_enum ep_type) {
 
-    ep_list[current_size_ep].ep = ep;
-    ep_list[current_size_ep].ep_type = ep_type;
+    // ep_list[current_size_ep].ep = ep;
+    // ep_list[current_size_ep].ep_type = ep_type;
+    
     ep_list_desc[current_size_ep] = ep;
-
     current_size_ep++;
     return 1;
 }
@@ -50,9 +50,6 @@ static zb_void_t zcl_device_cb(zb_bufid_t bufid)
 
     case ZB_ZCL_SET_ATTR_VALUE_CB_ID: // Inform user about attribute value modification
         zb_light_set_attribute(p_device_cb_param->endpoint, &p_device_cb_param->cb_param.set_attr_value_param);
-        break;
-    
-    case ZB_ZCL_IDENTIFY_EFFECT_CB_ID: // Inform user about identification request
         break;
 
     default:

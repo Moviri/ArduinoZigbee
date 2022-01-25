@@ -20,7 +20,9 @@
 #ifndef _ZIGBEE_H_
 #define _ZIGBEE_H_
 
+#include <vector>
 #include "ZigbeeEndpoint.h"
+#include "endpoints/endpoint_ctx.h"
 
 class Zigbee {
 public:
@@ -30,14 +32,16 @@ public:
   virtual void setTrustCenterKey(zb_uint8_t *zb_tc_key);
   virtual int begin(const zb_uint32_t channelMask = ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
   virtual void end();
-
   virtual void poll();
-  virtual void check_periodic_CB();
+  int addEP(EndpointCTX* ep_ctx);
   
 protected:
 
 private:
+    virtual void check_periodic_CB();
+
     zb_uint8_t *zb_tc_key;
+    
 };
 
 extern Zigbee& ZIGBEE;

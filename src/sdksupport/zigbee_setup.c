@@ -2,12 +2,14 @@
 #include "zb_mem_config_med.h"
 #include "zb_error_handler.h"
 
-#define MAX_CHILDREN 10                  /**< The maximum amount of connected devices. Setting this value to 0 disables association to this device.  */
+#define MAX_CHILDREN 10                 /**< The maximum amount of connected devices. Setting this value to 0 disables association to this device.  */
 #define ERASE_PERSISTENT_CONFIG ZB_FALSE /**< Do not erase NVRAM to save the network parameters after device reboot or power-off. */
 
 void zboss_signal_handler(zb_bufid_t bufid)
 {
+    /* No application-specific behavior is required. Call default signal handler. */
     ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
+
     if (bufid)
     {
         zb_buf_free(bufid);

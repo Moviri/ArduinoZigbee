@@ -9,7 +9,7 @@
 #define BULB_INIT_BASIC_STACK_VERSION     10                                    /**< Version of the implementation of the Zigbee stack (1 byte). */
 #define BULB_INIT_BASIC_HW_VERSION        11                                    /**< Version of the hardware of the device (1 byte). */
 #define BULB_INIT_BASIC_MANUF_NAME        "Arduino"                             /**< Manufacturer name (32 bytes). */
-#define BULB_INIT_BASIC_MODEL_ID          "Dimmable Light v1"                   /**< Model number assigned by manufacturer (32-bytes long string). */
+#define BULB_INIT_BASIC_MODEL_ID          "Arduino Dimmable Light"             /**< Model number assigned by manufacturer (32-bytes long string). */
 #define BULB_INIT_BASIC_DATE_CODE         "20210911"                            /**< First 8 bytes specify the date of manufacturer of the device in ISO 8601 format (YYYYMMDD). The rest (8 bytes) are manufacturer specific. */
 #define BULB_INIT_BASIC_POWER_SOURCE      ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE   /**< Type of power sources available for the device. For possible values see section 3.2.2.2.8 of ZCL specification. */
 #define BULB_INIT_BASIC_LOCATION_DESC     "Generic"                             /**< Describes the physical location of the device (16 bytes). May be modified during commisioning process. */
