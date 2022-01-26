@@ -76,13 +76,6 @@ class TemperatureSensorCTX : public EndpointCTX {
        zb_uint8_t endpoint_CB(zb_bufid_t bufid);
 };
  
-// TemperatureSensorCTX* get_temp_ctx_by_id(uint8_t ep_id);
- 
-// bool initialize_temp_sensor_EP(TemperatureSensorCTX* p_temp_ctx);
- 
-// // void temp_clusters_attr_init(temp_sensor_ctx_t* p_temp_ctx);
-// void temp_sensor_periodic_CB(uint32_t curr_time);
- 
 #define TemperatureSensor(ep_name, ep_id, CB, period)                                                                               \
 TemperatureSensorCTX temp_sens_## ep_name(ep_id, period, CB);                                                                       \
 ZB_ZCL_DECLARE_IDENTIFY_ATTRIB_LIST(identify_attr_list_## ep_name, &temp_sens_## ep_name.identify_attr.identify_time);              \
