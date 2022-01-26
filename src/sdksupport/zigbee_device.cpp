@@ -1,3 +1,4 @@
+#include "Zigbee.h"
 extern "C" {
 #include "zboss_api.h"
 #include "zboss_api_addons.h"
@@ -9,31 +10,27 @@ extern "C" {
 #include "endpoints/temperature_sensor/zigbee_temperature_sensor.h"
 
 #if !defined ZB_ROUTER_ROLE
-#error Define ZB_ROUTER_ROLE to compile light bulb (Router) source code.
+#error Define ZB_ROUTER_ROLE to compile Router source code.
 #endif
 
 zb_af_device_ctx_t dev_ctx;
-// zb_af_endpoint_desc_typed_t ep_list[4];
-zb_af_endpoint_desc_t *ep_list_desc[4];
+zb_af_endpoint_desc_t** ep_desc_arr;
 
-int current_size_ep = 0;
-
-bool add_EP(zb_af_endpoint_desc_t* ep, ep_type_enum ep_type) {
-
-    // ep_list[current_size_ep].ep = ep;
-    // ep_list[current_size_ep].ep_type = ep_type;
-    
-    ep_list_desc[current_size_ep] = ep;
-    current_size_ep++;
-    return 1;
-}
+// bool add_EP(zb_af_endpoint_desc_t* ep, ep_type_enum ep_type) {
+//     return 1;
+// }
 
 void init_device_ctx() {
-    dev_ctx.ep_count = current_size_ep;
-    dev_ctx.ep_desc_list = ep_list_desc;
+    dev_ctx.ep_count = vector_istance().size();
+    ep_desc_arr = new zb_af_endpoint_desc_t*[dev_ctx.ep_count];
+
+    for(int i=0; i < vector_istance().size(); i++) {
+        ep_desc_arr[i] = vector_istance()[i]->ep_desc;
+    }
+    dev_ctx.ep_desc_list = ep_desc_arr;
 }
 
-static zb_void_t zcl_device_cb(zb_bufid_t bufid)
+static zb_void_t zcl_device_cb(zb_bufid_t bufid)  // TODO: review how single CB_ID are managed. We should avoid function specific to a particular device(light, thermostat,...)
 {
     zb_uint8_t cluster_id;
     zb_uint8_t attr_id;
@@ -58,9 +55,28 @@ static zb_void_t zcl_device_cb(zb_bufid_t bufid)
     }
 }
 
+zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid) {
+    zb_bufid_t zcl_cmd_buf = bufid;
+    zb_zcl_parsed_hdr_t *cmd_info = ZB_BUF_GET_PARAM(zcl_cmd_buf, zb_zcl_parsed_hdr_t);
+    uint8_t ep_id = cmd_info->addr_data.common_data.dst_endpoint;
+    bool valid_ep = false;
+
+    EndpointCTX* ctx;
+    for(uint8_t i=0; i<vector_istance().size(); i++) {
+        if(vector_istance()[i]->ep_id == ep_id) {
+            ctx = vector_istance()[i];
+            valid_ep = true;
+        }
+    }
+    if(valid_ep) {
+        return ctx->endpoint_CB(bufid);
+    }
+    return ZB_FALSE;
+}
+
 void register_endpoint_cb() {
-    for(uint8_t i=0; i < current_size_ep; i++) {
-        ZB_AF_SET_ENDPOINT_HANDLER(ep_list_desc[i]->ep_id, zcl_light_endpoint_cb);
+    for(uint8_t i=0; i < vector_istance().size(); i++) {
+        ZB_AF_SET_ENDPOINT_HANDLER(vector_istance()[i]->ep_id, endpoint_CB_wrapper);
     }
 }
 

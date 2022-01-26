@@ -16,21 +16,12 @@ extern "C" {
 #define SENSOR_INIT_BASIC_STACK_VERSION     10                                  /**< Version of the implementation of the Zigbee stack (1 byte). */
 #define SENSOR_INIT_BASIC_HW_VERSION        11                                  /**< Version of the hardware of the device (1 byte). */
 #define SENSOR_INIT_BASIC_MANUF_NAME        "Arduino"                           /**< Manufacturer name (32 bytes). */
-#define SENSOR_INIT_BASIC_MODEL_ID          "Arduino Temperature Sensor"        /**< Model number assigned by the manufacturer (32-bytes long string). */
+#define SENSOR_INIT_BASIC_MODEL_ID          "Temperature Sensor v1"             /**< Model number assigned by the manufacturer (32-bytes long string). */
 #define SENSOR_INIT_BASIC_DATE_CODE         "20211111"                          /**< Date provided by the manufacturer of the device in ISO 8601 format (YYYYMMDD), for the first 8 bytes. The remaining 8 bytes are manufacturer-specific. */
 #define SENSOR_INIT_BASIC_POWER_SOURCE      ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE /**< Type of power source or sources available for the device. For possible values, see section 3.2.2.2.8 of the ZCL specification. */
 #define SENSOR_INIT_BASIC_LOCATION_DESC     "Generic"                           /**< Description of the physical location of the device (16 bytes). You can modify it during the commisioning process. */
 #define SENSOR_INIT_BASIC_PH_ENV            ZB_ZCL_BASIC_ENV_UNSPECIFIED        /**< Description of the type of physical environment. For possible values, see section 3.2.2.2.10 of the ZCL specification. */
  
-typedef struct
-{
-   uint8_t ep_id;                                      // Endpoint ID
-   float (*tempCB)();                                  // Arduino callback
-   float period;                                       // Milliseconds between two measurements
-   zb_zcl_basic_attrs_ext_t            basic_attr;
-   zb_zcl_identify_attrs_t             identify_attr;
-   zb_zcl_temp_measurement_attrs_t     temp_attr;
-} temp_sensor_ctx_t;
  
 class TemperatureSensorCTX : public EndpointCTX {
    public:
@@ -71,9 +62,10 @@ class TemperatureSensorCTX : public EndpointCTX {
        }
 
        zb_zcl_temp_measurement_attrs_t temp_attr;
-       float (*tempCB)();                               // Arduino callback
-       void periodic_CB();            // Periodic callback
-       zb_uint8_t endpoint_CB(zb_bufid_t bufid);
+
+       float (*tempCB)();                           // Callback defined in Arduino sketch
+       void periodic_CB();                          // Periodic callback
+       zb_uint8_t endpoint_CB(zb_bufid_t bufid);    // Endpoint specific callback
 };
  
 #define TemperatureSensor(ep_name, ep_id, CB, period)                                                                               \
@@ -104,9 +96,9 @@ ZB_HA_DECLARE_TEMPERATURE_SENSOR_EP_VA(temperature_sensor_ep_## ep_name,        
                                    ep_id,                                                                                           \
                                    temperature_sensor_clusters_## ep_name);                                                         \
 ep_type_enum type## ep_name = ha_temp_sensor;                                                                                       \
-bool ph_add_ep## ep_name = add_EP(&temperature_sensor_ep_## ep_name, type## ep_name);                                               \
+bool ep_desc## ep_name = temp_sens_## ep_name.set_desc(&temperature_sensor_ep_## ep_name);                                          \
 int test_i## ep_name = ZIGBEE.addEP(&temp_sens_## ep_name);
- 
+
 #define ZB_HA_DECLARE_TEMPERATURE_SENSOR_EP_VA(ep_name, ep_id, cluster_list)                                                        \
    ZB_ZCL_DECLARE_TEMPERATURE_SENSOR_SIMPLE_DESC_VA(                                                                                \
        ep_name,                                                                                                                     \

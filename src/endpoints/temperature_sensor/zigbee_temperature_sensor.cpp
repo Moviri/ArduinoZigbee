@@ -4,7 +4,7 @@
 
 void TemperatureSensorCTX::periodic_CB() {
 
-    // Serial.println("CB triggered");
+    Serial.println("CB triggered");
     float curr_temp = TemperatureSensorCTX::tempCB();
     curr_temp *= 100;
     int16_t curr_temp_cast = (int16_t) curr_temp;
@@ -18,5 +18,5 @@ void TemperatureSensorCTX::periodic_CB() {
 }
 
 zb_uint8_t TemperatureSensorCTX::endpoint_CB(zb_bufid_t bufid) {
-
+    return ZB_FALSE;  // CB doesn't handle any messages
 }

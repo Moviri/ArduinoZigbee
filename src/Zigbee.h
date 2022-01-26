@@ -24,6 +24,9 @@
 #include "ZigbeeEndpoint.h"
 #include "endpoints/endpoint_ctx.h"
 
+std::vector<EndpointCTX*>& vector_istance();
+std::vector<uint32_t>& trig_vector_istance();
+
 class Zigbee {
 public:
   Zigbee();

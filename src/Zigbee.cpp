@@ -17,7 +17,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Arduino.h"  // TODO: check correctness
+#include "Arduino.h"
 #include "Zigbee.h"
 #include "pal_bb.h"
 #include "sdksupport/zigbee_device.h"
