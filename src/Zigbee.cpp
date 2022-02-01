@@ -34,11 +34,6 @@ std::vector<EndpointCTX*>& vector_istance() {
     return ctx_temp_class_arr;
 }
 
-std::vector<uint32_t>& trig_vector_istance() {
-    static std::vector<uint32_t> last_trig_time;
-    return last_trig_time;
-}
-
 Zigbee::Zigbee()
 {
     Zigbee::zb_tc_key = NULL;
@@ -50,9 +45,6 @@ Zigbee::~Zigbee()
 
 void Zigbee::setTrustCenterKey(zb_uint8_t *zb_tc_key_l)
 {
-    //zb_zdo_set_tc_standard_distributed_key(zb_tc_key);
-    //zb_zdo_setup_network_as_distributed();
-
     Zigbee::zb_tc_key = zb_tc_key_l;
 }
 
@@ -89,7 +81,6 @@ void Zigbee::poll()
 int Zigbee::addEP(EndpointCTX* ep_ctx) 
 {
     vector_istance().push_back(ep_ctx);
-    trig_vector_istance().push_back(0);
     return 0;
 }
 
@@ -98,9 +89,9 @@ void Zigbee::check_periodic_CB()
 {
     uint32_t curr_time = millis();
     for(int i=0; i < vector_istance().size(); i++) {
-        if (curr_time - trig_vector_istance()[i] >= vector_istance()[i]->period) {
+        if ((curr_time - vector_istance()[i]->last_trig_time >= vector_istance()[i]->period) && (vector_istance()[i]->period > 0)) {
             vector_istance()[i]->periodic_CB();
-            trig_vector_istance()[i] = curr_time;
+            vector_istance()[i]->last_trig_time = curr_time;
         }
     }
 }
