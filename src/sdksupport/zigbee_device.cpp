@@ -14,15 +14,11 @@ extern "C" {
 #endif
 
 zb_af_device_ctx_t dev_ctx;
-zb_af_endpoint_desc_t** ep_desc_arr;
 
-// bool add_EP(zb_af_endpoint_desc_t* ep, ep_type_enum ep_type) {
-//     return 1;
-// }
 
 void init_device_ctx() {
     dev_ctx.ep_count = vector_istance().size();
-    ep_desc_arr = new zb_af_endpoint_desc_t*[dev_ctx.ep_count];
+    zb_af_endpoint_desc_t** ep_desc_arr = new zb_af_endpoint_desc_t*[dev_ctx.ep_count];
 
     for(int i=0; i < vector_istance().size(); i++) {
         ep_desc_arr[i] = vector_istance()[i]->ep_desc;
