@@ -5,7 +5,7 @@
 TemperatureSensorCTX::TemperatureSensorCTX(float period_p, float (*aTempCB)()) : EndpointCTX(period_p)
 {
     tempCB = aTempCB;
-    tempCB();   // initialize measure
+    tempCB();   // initialize temperature value to avoid bad read from other devices
 
     /* Basic cluster attributes data */
     basic_attr.app_version = 01;   /**< Version of the application software (1 byte). */

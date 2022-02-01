@@ -88,10 +88,12 @@ int Zigbee::addEP(EndpointCTX* ep_ctx)
 void Zigbee::check_periodic_CB()
 {
     uint32_t curr_time = millis();
-    for(int i=0; i < vector_istance().size(); i++) {
-        if ((curr_time - vector_istance()[i]->last_trig_time >= vector_istance()[i]->period) && (vector_istance()[i]->period > 0)) {
-            vector_istance()[i]->periodic_CB();
-            vector_istance()[i]->last_trig_time = curr_time;
+    std::vector<EndpointCTX*>& endpoints = vector_istance();
+    for(int i=0; i < endpoints.size(); i++) {
+        EndpointCTX* endpoint = endpoints[i];
+        if ((curr_time - endpoint->last_trig_time >= endpoint->period) && (endpoint->period > 0)) {
+            endpoint->periodic_CB();
+            endpoint->last_trig_time = curr_time;
         }
     }
 }
