@@ -88,11 +88,6 @@ void Zigbee::poll()
 
 int Zigbee::addEP(EndpointCTX* ep_ctx) 
 {
-    // int size_v = Zigbee::trig_time_v.size();
-    // Zigbee::ep_ctx_v.push_back(ep_ctx);
-    // Zigbee::trig_time_v.push_back(0);
-    // size_v = Zigbee::trig_time_v.size();
-
     vector_istance().push_back(ep_ctx);
     trig_vector_istance().push_back(0);
     return 0;
@@ -101,17 +96,6 @@ int Zigbee::addEP(EndpointCTX* ep_ctx)
 // CB are triggered period seconds after the previous call. Relative time, not absolute time
 void Zigbee::check_periodic_CB()
 {
-    // uint32_t curr_time = millis();
-    // uint8_t ep_size = Zigbee::trig_time_v.size();
-    // Serial.println(Zigbee::trig_time_v.size());
-    // Serial.println(vector_istance().size());
-    // for(int i=0; i < ep_size; i++) {
-    //     if (curr_time - Zigbee::trig_time_v[i] >= Zigbee::ep_ctx_v[i]->period) {
-    //         Zigbee::ep_ctx_v[i]->periodic_CB();
-    //         Zigbee::trig_time_v[i] = curr_time;
-    //     }
-    // }
-
     uint32_t curr_time = millis();
     for(int i=0; i < vector_istance().size(); i++) {
         if (curr_time - trig_vector_istance()[i] >= vector_istance()[i]->period) {

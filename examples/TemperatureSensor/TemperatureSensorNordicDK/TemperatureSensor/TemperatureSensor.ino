@@ -18,7 +18,7 @@ float tempSensorCB_1() {
 
 #define EP_1 15
 
-TemperatureSensor(temp_1, EP_1, tempSensorCB_1, 2000);
+TemperatureSensor(tempSensorCB_1);
 
 void setup() {
   ZIGBEE.begin(1 << 11);
