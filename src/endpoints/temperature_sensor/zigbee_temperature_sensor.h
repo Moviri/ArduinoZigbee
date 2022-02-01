@@ -12,55 +12,11 @@ extern "C"
 #include "../endpoint_ctx.h"
 #include "../../sdksupport/zigbee_device.h"
 
-/* Basic cluster attributes initial values. For more information, see section 3.2.2.2 of the ZCL specification. */
-#define SENSOR_INIT_BASIC_APP_VERSION 01                                   /**< Version of the application software (1 byte). */
-#define SENSOR_INIT_BASIC_STACK_VERSION 10                                 /**< Version of the implementation of the Zigbee stack (1 byte). */
-#define SENSOR_INIT_BASIC_HW_VERSION 11                                    /**< Version of the hardware of the device (1 byte). */
-#define SENSOR_INIT_BASIC_MANUF_NAME "Arduino"                             /**< Manufacturer name (32 bytes). */
-#define SENSOR_INIT_BASIC_MODEL_ID "Temperature Sensor v1"                 /**< Model number assigned by the manufacturer (32-bytes long string). */
-#define SENSOR_INIT_BASIC_DATE_CODE "20211111"                             /**< Date provided by the manufacturer of the device in ISO 8601 format (YYYYMMDD), for the first 8 bytes. The remaining 8 bytes are manufacturer-specific. */
-#define SENSOR_INIT_BASIC_POWER_SOURCE ZB_ZCL_BASIC_POWER_SOURCE_DC_SOURCE /**< Type of power source or sources available for the device. For possible values, see section 3.2.2.2.8 of the ZCL specification. */
-#define SENSOR_INIT_BASIC_LOCATION_DESC "Generic"                          /**< Description of the physical location of the device (16 bytes). You can modify it during the commisioning process. */
-#define SENSOR_INIT_BASIC_PH_ENV ZB_ZCL_BASIC_ENV_UNSPECIFIED              /**< Description of the type of physical environment. For possible values, see section 3.2.2.2.10 of the ZCL specification. */
 
 class TemperatureSensorCTX : public EndpointCTX
 {
 public:
-    TemperatureSensorCTX(float period_p, float (*aTempCB)()) : EndpointCTX(period_p)
-    {
-        tempCB = aTempCB;
-
-        /* Basic cluster attributes data */
-        basic_attr.app_version = SENSOR_INIT_BASIC_APP_VERSION;
-        basic_attr.stack_version = SENSOR_INIT_BASIC_STACK_VERSION;
-        basic_attr.hw_version = SENSOR_INIT_BASIC_HW_VERSION;
-
-        ZB_ZCL_SET_STRING_VAL(basic_attr.mf_name,
-                              SENSOR_INIT_BASIC_MANUF_NAME,
-                              ZB_ZCL_STRING_CONST_SIZE(SENSOR_INIT_BASIC_MANUF_NAME));
-
-        ZB_ZCL_SET_STRING_VAL(basic_attr.model_id,
-                              SENSOR_INIT_BASIC_MODEL_ID,
-                              ZB_ZCL_STRING_CONST_SIZE(SENSOR_INIT_BASIC_MODEL_ID));
-
-        ZB_ZCL_SET_STRING_VAL(basic_attr.date_code,
-                              SENSOR_INIT_BASIC_DATE_CODE,
-                              ZB_ZCL_STRING_CONST_SIZE(SENSOR_INIT_BASIC_DATE_CODE));
-
-        basic_attr.power_source = SENSOR_INIT_BASIC_POWER_SOURCE;
-
-        ZB_ZCL_SET_STRING_VAL(basic_attr.location_id,
-                              SENSOR_INIT_BASIC_LOCATION_DESC,
-                              ZB_ZCL_STRING_CONST_SIZE(SENSOR_INIT_BASIC_LOCATION_DESC));
-
-        basic_attr.ph_env = SENSOR_INIT_BASIC_PH_ENV;
-
-        /* Temperature measurement cluster attributes data */
-        temp_attr.measure_value = ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_UNKNOWN;
-        temp_attr.min_measure_value = ZB_ZCL_ATTR_TEMP_MEASUREMENT_MIN_VALUE_MIN_VALUE;
-        temp_attr.max_measure_value = ZB_ZCL_ATTR_TEMP_MEASUREMENT_MAX_VALUE_MAX_VALUE;
-        temp_attr.tolerance = ZB_ZCL_ATTR_TEMP_MEASUREMENT_TOLERANCE_MAX_VALUE;
-    }
+    TemperatureSensorCTX(float period_p, float (*aTempCB)());
 
     zb_zcl_temp_measurement_attrs_t temp_attr;
 

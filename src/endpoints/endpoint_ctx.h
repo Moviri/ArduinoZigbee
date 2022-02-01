@@ -35,8 +35,8 @@ public:
     zb_af_endpoint_desc_t *ep_desc;        // Endpoint description for user applications
 
     /* Methods */
-    virtual void periodic_CB();                       // Callback for periodic events
-    virtual zb_uint8_t endpoint_CB(zb_bufid_t bufid); // Callback for ep specific events
+    virtual void periodic_CB() = 0;                       // Callback for periodic events
+    virtual zb_uint8_t endpoint_CB(zb_bufid_t bufid) = 0; // Callback for ep specific events
     bool set_desc(zb_af_endpoint_desc_t *ep_desc_p)   // Setter function for ep_desc attribute
     {
         ep_desc = ep_desc_p;
