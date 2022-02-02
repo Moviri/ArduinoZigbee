@@ -59,9 +59,9 @@ zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid) {
 
     std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
     EndpointCTX* ctx;
-    for(uint8_t i=0; i<endpoints().size(); i++) {
-        if(endpoints()[i]->ep_id == ep_id) {
-            return endpoints()[i];
+    for(uint8_t i=0; i<endpoints.size(); i++) {
+        if(endpoints[i]->ep_id == ep_id) {
+            return endpoints[i]->endpoint_CB(bufid);
         }
     }
     return ZB_FALSE;
