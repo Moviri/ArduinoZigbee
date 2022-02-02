@@ -73,12 +73,13 @@ static zb_void_t zcl_device_cb(zb_bufid_t bufid)  // TODO: review how single CB_
     }
 }
 
-static zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid) {
+zb_uint8_t Zigbee::endpoint_CB_wrapper(zb_bufid_t bufid) {
     zb_bufid_t zcl_cmd_buf = bufid;
     zb_zcl_parsed_hdr_t *cmd_info = ZB_BUF_GET_PARAM(zcl_cmd_buf, zb_zcl_parsed_hdr_t);
     uint8_t ep_id = cmd_info->addr_data.common_data.dst_endpoint;
 
-    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
+    // Since this is a class static method we can access private members.
+    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().m_endpoints;
     for(uint8_t i=0; i<endpoints.size(); i++) {
         EndpointCTX* endpoint = endpoints[i];
         if(endpoint->ep_id == ep_id) {
@@ -111,7 +112,7 @@ int Zigbee::init_device() {
 
     /* register endpoints callback. */
     for(uint8_t i=0; i < m_endpoints.size(); i++) {
-        ZB_AF_SET_ENDPOINT_HANDLER(m_endpoints[i]->ep_id, endpoint_CB_wrapper);
+        ZB_AF_SET_ENDPOINT_HANDLER(m_endpoints[i]->ep_id, &Zigbee::endpoint_CB_wrapper);
     }
 
     return 1;
@@ -122,10 +123,6 @@ Zigbee& Zigbee::getInstance()
     // Instantiate just one instance on the first use.
     static Zigbee instance;
     return instance;
-}
-
-std::vector<EndpointCTX*>& Zigbee::endpoints() {
-    return m_endpoints;
 }
 
 Zigbee::Zigbee(): m_zb_tc_key(nullptr)

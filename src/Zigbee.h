@@ -37,14 +37,13 @@ public:
 
   static Zigbee& getInstance();
 
-  // To be removed, since is better to limit the access to the endpoints vector using didicated functions.
-  std::vector<EndpointCTX*>& endpoints();
-
   void setTrustCenterKey(zb_uint8_t *zb_tc_key);
   int begin(const zb_uint32_t channelMask = ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
   void end();
   void poll();
   int addEP(EndpointCTX* ep_ctx);
+
+  static zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid);
 
 private:
     void update_endpoints();
