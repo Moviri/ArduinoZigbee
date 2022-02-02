@@ -23,15 +23,28 @@
 #include "sdksupport/zigbee_device.h"
 #include "endpoints/temperature_sensor/zigbee_temperature_sensor.h"
 
+/** Global library helper object reference typical of Arduino.
+ * To be used only in the .ino file.
+ */
+Zigbee &ZIGBEE = Zigbee::getInstance();
+
 extern "C"
 {
     int zigbee_init(const zb_uint32_t channelMask);
     int zigbee_start();
+    void nrf_802154_core_irq_handler(void);
 }
 
 std::vector<EndpointCTX*>& vector_istance() {
     static std::vector<EndpointCTX*> ctx_temp_class_arr;
     return ctx_temp_class_arr;
+}
+
+Zigbee& Zigbee::getInstance()
+{
+    // Instantiate just one instance on the first use.
+    static Zigbee instance;
+    return instance;
 }
 
 Zigbee::Zigbee()
@@ -46,10 +59,6 @@ Zigbee::~Zigbee()
 void Zigbee::setTrustCenterKey(zb_uint8_t *zb_tc_key_l)
 {
     Zigbee::zb_tc_key = zb_tc_key_l;
-}
-
-extern "C"{
-    void nrf_802154_core_irq_handler(void);
 }
 
 int Zigbee::begin(const zb_uint32_t channelMask)
@@ -91,12 +100,9 @@ void Zigbee::check_periodic_CB()
     std::vector<EndpointCTX*>& endpoints = vector_istance();
     for(int i=0; i < endpoints.size(); i++) {
         EndpointCTX* endpoint = endpoints[i];
-        if ((curr_time - endpoint->last_trig_time >= endpoint->period) && (endpoint->period > 0)) {
+        if ((endpoint->period > 0) && (curr_time - endpoint->last_trig_time >= endpoint->period)) {
             endpoint->periodic_CB();
             endpoint->last_trig_time = curr_time;
         }
     }
 }
-
-Zigbee ZIGBEEObj;
-Zigbee &ZIGBEE = ZIGBEEObj;

@@ -27,24 +27,30 @@
 std::vector<EndpointCTX*>& vector_istance();
 std::vector<uint32_t>& trig_vector_istance();
 
+/**
+ * @brief The Zigbee class is designed to be a singleton object that reprsents the Zigbee stack.
+ */
 class Zigbee {
-public:
+private:
   Zigbee();
-  virtual ~Zigbee();
+  ~Zigbee();
 
-  virtual void setTrustCenterKey(zb_uint8_t *zb_tc_key);
-  virtual int begin(const zb_uint32_t channelMask = ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
-  virtual void end();
-  virtual void poll();
+public:
+  Zigbee(Zigbee const&)          = delete;
+  void operator=(Zigbee const&)  = delete;
+
+  static Zigbee& getInstance();
+
+  void setTrustCenterKey(zb_uint8_t *zb_tc_key);
+  int begin(const zb_uint32_t channelMask = ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
+  void end();
+  void poll();
   int addEP(EndpointCTX* ep_ctx);
-  
-protected:
 
 private:
-    virtual void check_periodic_CB();
+    void check_periodic_CB();
 
     zb_uint8_t *zb_tc_key;
-    
 };
 
 extern Zigbee& ZIGBEE;
