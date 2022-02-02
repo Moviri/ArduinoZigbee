@@ -8,7 +8,6 @@ extern "C" {
 #include "zb_error_handler.h"
 }
 #include "../endpoint_enum.h"
-#include "../../sdksupport/zigbee_device.h"
 
 // #ifdef __cplusplus
 // extern "C" {

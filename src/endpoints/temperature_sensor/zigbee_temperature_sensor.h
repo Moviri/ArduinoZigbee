@@ -10,7 +10,6 @@ extern "C"
 }
 #include "../endpoint_enum.h"
 #include "../endpoint_ctx.h"
-#include "../../sdksupport/zigbee_device.h"
 
 
 class TemperatureSensorCTX : public EndpointCTX

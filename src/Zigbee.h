@@ -21,7 +21,6 @@
 #define _ZIGBEE_H_
 
 #include <vector>
-#include "ZigbeeEndpoint.h"
 #include "endpoints/endpoint_ctx.h"
 
 /**
