@@ -35,11 +35,6 @@ extern "C"
     void nrf_802154_core_irq_handler(void);
 }
 
-std::vector<EndpointCTX*>& vector_istance() {
-    static std::vector<EndpointCTX*> ctx_temp_class_arr;
-    return ctx_temp_class_arr;
-}
-
 Zigbee& Zigbee::getInstance()
 {
     // Instantiate just one instance on the first use.
@@ -47,9 +42,12 @@ Zigbee& Zigbee::getInstance()
     return instance;
 }
 
-Zigbee::Zigbee()
+std::vector<EndpointCTX*>& Zigbee::endpoints() {
+    return m_endpoints;
+}
+
+Zigbee::Zigbee(): m_zb_tc_key(nullptr)
 {
-    Zigbee::zb_tc_key = NULL;
 }
 
 Zigbee::~Zigbee()
@@ -58,7 +56,7 @@ Zigbee::~Zigbee()
 
 void Zigbee::setTrustCenterKey(zb_uint8_t *zb_tc_key_l)
 {
-    Zigbee::zb_tc_key = zb_tc_key_l;
+    m_zb_tc_key = zb_tc_key_l;
 }
 
 int Zigbee::begin(const zb_uint32_t channelMask)
@@ -66,8 +64,8 @@ int Zigbee::begin(const zb_uint32_t channelMask)
     PalBbSetProtId(BB_PROT_15P4);
     PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
     zigbee_init(channelMask);
-    if (Zigbee::zb_tc_key != NULL) {
-        zb_zdo_set_tc_standard_distributed_key(Zigbee::zb_tc_key);
+    if (m_zb_tc_key != nullptr) {
+        zb_zdo_set_tc_standard_distributed_key(m_zb_tc_key);
         zb_zdo_setup_network_as_distributed();
     }
      
@@ -89,7 +87,7 @@ void Zigbee::poll()
 
 int Zigbee::addEP(EndpointCTX* ep_ctx) 
 {
-    vector_istance().push_back(ep_ctx);
+    m_endpoints.push_back(ep_ctx);
     return 0;
 }
 
@@ -97,9 +95,8 @@ int Zigbee::addEP(EndpointCTX* ep_ctx)
 void Zigbee::check_periodic_CB()
 {
     uint32_t curr_time = millis();
-    std::vector<EndpointCTX*>& endpoints = vector_istance();
-    for(int i=0; i < endpoints.size(); i++) {
-        EndpointCTX* endpoint = endpoints[i];
+    for(int i=0; i < m_endpoints.size(); i++) {
+        EndpointCTX* endpoint = m_endpoints[i];
         if ((endpoint->period > 0) && (curr_time - endpoint->last_trig_time >= endpoint->period)) {
             endpoint->periodic_CB();
             endpoint->last_trig_time = curr_time;

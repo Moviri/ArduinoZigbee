@@ -24,9 +24,6 @@
 #include "ZigbeeEndpoint.h"
 #include "endpoints/endpoint_ctx.h"
 
-std::vector<EndpointCTX*>& vector_istance();
-std::vector<uint32_t>& trig_vector_istance();
-
 /**
  * @brief The Zigbee class is designed to be a singleton object that reprsents the Zigbee stack.
  */
@@ -41,6 +38,9 @@ public:
 
   static Zigbee& getInstance();
 
+  // To be removed, since is better to limit the access to the endpoints vector using didicated functions.
+  std::vector<EndpointCTX*>& endpoints();
+
   void setTrustCenterKey(zb_uint8_t *zb_tc_key);
   int begin(const zb_uint32_t channelMask = ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
   void end();
@@ -50,7 +50,8 @@ public:
 private:
     void check_periodic_CB();
 
-    zb_uint8_t *zb_tc_key;
+    zb_uint8_t *m_zb_tc_key;
+    std::vector<EndpointCTX*> m_endpoints;
 };
 
 extern Zigbee& ZIGBEE;

@@ -17,11 +17,12 @@ zb_af_device_ctx_t dev_ctx;
 
 
 void init_device_ctx() {
-    dev_ctx.ep_count = vector_istance().size();
+    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
+    dev_ctx.ep_count = endpoints.size();
     zb_af_endpoint_desc_t** ep_desc_arr = new zb_af_endpoint_desc_t*[dev_ctx.ep_count];
 
-    for(int i=0; i < vector_istance().size(); i++) {
-        ep_desc_arr[i] = vector_istance()[i]->ep_desc;
+    for(int i=0; i < endpoints.size(); i++) {
+        ep_desc_arr[i] = endpoints[i]->ep_desc;
     }
     dev_ctx.ep_desc_list = ep_desc_arr;
 }
@@ -55,24 +56,21 @@ zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid) {
     zb_bufid_t zcl_cmd_buf = bufid;
     zb_zcl_parsed_hdr_t *cmd_info = ZB_BUF_GET_PARAM(zcl_cmd_buf, zb_zcl_parsed_hdr_t);
     uint8_t ep_id = cmd_info->addr_data.common_data.dst_endpoint;
-    bool valid_ep = false;
 
+    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
     EndpointCTX* ctx;
-    for(uint8_t i=0; i<vector_istance().size(); i++) {
-        if(vector_istance()[i]->ep_id == ep_id) {
-            ctx = vector_istance()[i];
-            valid_ep = true;
+    for(uint8_t i=0; i<endpoints().size(); i++) {
+        if(endpoints()[i]->ep_id == ep_id) {
+            return endpoints()[i];
         }
-    }
-    if(valid_ep) {
-        return ctx->endpoint_CB(bufid);
     }
     return ZB_FALSE;
 }
 
 void register_endpoint_cb() {
-    for(uint8_t i=0; i < vector_istance().size(); i++) {
-        ZB_AF_SET_ENDPOINT_HANDLER(vector_istance()[i]->ep_id, endpoint_CB_wrapper);
+    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
+    for(uint8_t i=0; i < endpoints.size(); i++) {
+        ZB_AF_SET_ENDPOINT_HANDLER(endpoints[i]->ep_id, endpoint_CB_wrapper);
     }
 }
 
