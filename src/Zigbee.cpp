@@ -48,17 +48,6 @@ Zigbee &ZIGBEE = Zigbee::getInstance();
 
 zb_af_device_ctx_t dev_ctx;
 
-static void init_device_ctx() {
-    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
-    dev_ctx.ep_count = endpoints.size();
-    zb_af_endpoint_desc_t** ep_desc_arr = new zb_af_endpoint_desc_t*[dev_ctx.ep_count];
-
-    for(int i=0; i < endpoints.size(); i++) {
-        ep_desc_arr[i] = endpoints[i]->ep_desc;
-    }
-    dev_ctx.ep_desc_list = ep_desc_arr;
-}
-
 static zb_void_t zcl_device_cb(zb_bufid_t bufid)  // TODO: review how single CB_ID are managed. We should avoid function specific to a particular device(light, thermostat,...)
 {
     zb_uint8_t cluster_id;
@@ -84,29 +73,32 @@ static zb_void_t zcl_device_cb(zb_bufid_t bufid)  // TODO: review how single CB_
     }
 }
 
-zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid) {
+static zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid) {
     zb_bufid_t zcl_cmd_buf = bufid;
     zb_zcl_parsed_hdr_t *cmd_info = ZB_BUF_GET_PARAM(zcl_cmd_buf, zb_zcl_parsed_hdr_t);
     uint8_t ep_id = cmd_info->addr_data.common_data.dst_endpoint;
 
     std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
-    EndpointCTX* ctx;
     for(uint8_t i=0; i<endpoints.size(); i++) {
-        if(endpoints[i]->ep_id == ep_id) {
-            return endpoints[i]->endpoint_CB(bufid);
+        EndpointCTX* endpoint = endpoints[i];
+        if(endpoint->ep_id == ep_id) {
+            return endpoint->endpoint_CB(bufid);
         }
     }
     return ZB_FALSE;
 }
 
-void register_endpoint_cb() {
-    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().endpoints();
-    for(uint8_t i=0; i < endpoints.size(); i++) {
-        ZB_AF_SET_ENDPOINT_HANDLER(endpoints[i]->ep_id, endpoint_CB_wrapper);
+void Zigbee::init_device_ctx() {
+    dev_ctx.ep_count = m_endpoints.size();
+    zb_af_endpoint_desc_t** ep_desc_arr = new zb_af_endpoint_desc_t*[dev_ctx.ep_count];
+
+    for(int i=0; i < m_endpoints.size(); i++) {
+        ep_desc_arr[i] = m_endpoints[i]->ep_desc;
     }
+    dev_ctx.ep_desc_list = ep_desc_arr;
 }
 
-int init_device() {
+int Zigbee::init_device() {
     /* Initialize application context structure. */
     UNUSED_RETURN_VALUE(NRF_LOG_PROCESS());
 
@@ -117,7 +109,10 @@ int init_device() {
     init_device_ctx();
     ZB_AF_REGISTER_DEVICE_CTX(&dev_ctx);
 
-    register_endpoint_cb();
+    /* register endpoints callback. */
+    for(uint8_t i=0; i < m_endpoints.size(); i++) {
+        ZB_AF_SET_ENDPOINT_HANDLER(m_endpoints[i]->ep_id, endpoint_CB_wrapper);
+    }
 
     return 1;
 }
@@ -169,7 +164,7 @@ void Zigbee::poll()
     zboss_main_loop_iteration();
 
     // Check if periodic callbacks need to be triggered
-    Zigbee::check_periodic_CB();
+    update_endpoints();
 }
 
 int Zigbee::addEP(EndpointCTX* ep_ctx) 
@@ -178,10 +173,10 @@ int Zigbee::addEP(EndpointCTX* ep_ctx)
     return 0;
 }
 
-// CB are triggered period seconds after the previous call. Relative time, not absolute time
-void Zigbee::check_periodic_CB()
+void Zigbee::update_endpoints()
 {
-    uint32_t curr_time = millis();
+    // CB are triggered period seconds after the previous call. Relative time, not absolute time.
+    const uint32_t curr_time = millis();
     for(int i=0; i < m_endpoints.size(); i++) {
         EndpointCTX* endpoint = m_endpoints[i];
         if ((endpoint->period > 0) && (curr_time - endpoint->last_trig_time >= endpoint->period)) {

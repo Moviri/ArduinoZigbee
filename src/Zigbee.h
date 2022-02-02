@@ -47,7 +47,9 @@ public:
   int addEP(EndpointCTX* ep_ctx);
 
 private:
-    void check_periodic_CB();
+    void update_endpoints();
+    void init_device_ctx();
+    int init_device();
 
     zb_uint8_t *m_zb_tc_key;
     std::vector<EndpointCTX*> m_endpoints;
