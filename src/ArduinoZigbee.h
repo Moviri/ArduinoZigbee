@@ -20,11 +20,9 @@
 #ifndef _ARDUINO_ZIGBEE_H_
 #define _ARDUINO_ZIGBEE_H_
 
-#include "Zigbee.h"
-#include "endpoints/dimmable_light/zigbee_dimmable_light.h"
-#include "endpoints/temperature_sensor/zigbee_temperature_sensor.h"
-#include "endpoints/endpoint_ctx.h"
-
-uint8_t EndpointCTX::ep_id_counter = 0;  // Initialize endpoint id counter
+#include "zigbee_device.h"
+#include "endpoints/zigbee_dimmable_light.h"
+#include "endpoints/zigbee_temperature_sensor.h"
+#include "endpoints/zigbee_endpoint.h"
 
 #endif

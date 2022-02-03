@@ -19,7 +19,7 @@ float tempSensorCB_1() {
   return HTS.readTemperature(); 
 }
 
-TemperatureSensor(tempSensorCB_1);
+ZigbeeTemperatureSensor temperature_sensor(tempSensorCB_1);
 
 void setup() {
   Serial.begin(9600);
@@ -32,8 +32,11 @@ void setup() {
   }
   Serial.println("Sensors initialized!");
 
-  ZIGBEE.begin(1 << 11);
+  ZIGBEE.addEndpoint(temperature_sensor);
+
+  ZIGBEE.begin(11);
 }
+
 void loop() {
   ZIGBEE.poll();
 }

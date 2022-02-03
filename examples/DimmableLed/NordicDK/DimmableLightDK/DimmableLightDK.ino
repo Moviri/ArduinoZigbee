@@ -17,19 +17,21 @@ void dimLightCB_1(const uint8_t brightness_level) {
   analogWrite(LED_BUILTIN, 255 - brightness_level);
 }
 
-DimmableLight(dimLightCB_1);
+ZigbeeDimmableLight light(dimLightCB_1);
 
 void setup() {
+  ZIGBEE.addEndpoint(light);
   /*
-  // If you want to explicity set the TC_KEY uncomment this section
+  // If you want to explicitly set the TC_KEY uncomment this section
 
   // ZLL Commissioning Trust Centre Link Key
   #define ZB_ZLL_TC_KEY {}; // insert TC_KEY as HEX if known (0xFF, 0xFF, ...)
   zb_uint8_t zb_zll_tc_key[] = ZB_ZLL_TC_KEY;
   ZIGBEE.setTrustCenterKey(zb_zll_tc_key);
   */
-  ZIGBEE.begin(1 << 11);
+  ZIGBEE.begin(11);
 }
+
 void loop() {
   ZIGBEE.poll();
 }

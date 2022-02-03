@@ -16,7 +16,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
     }
 }
 
-int zigbee_init(const zb_uint32_t channelMask)
+int zigbee_init(const zb_uint32_t channel_mask)
 {
     zb_ieee_addr_t ieee_addr;
 
@@ -28,21 +28,19 @@ int zigbee_init(const zb_uint32_t channelMask)
     zb_set_long_address(ieee_addr);
 
     /* Set static long IEEE address. */
-    zb_set_network_router_role(channelMask);
+    zb_set_network_router_role(channel_mask);
     zb_set_max_children(MAX_CHILDREN);
     zigbee_erase_persistent_storage(ERASE_PERSISTENT_CONFIG);
     zb_set_keepalive_timeout(ZB_MILLISECONDS_TO_BEACON_INTERVAL(3000));
     return 1;
 }
 
-int zigbee_start()
+zb_ret_t zigbee_start()
 {
-    zb_ret_t zb_err_code;
-
     zb_bdb_set_legacy_device_support(0);
 
     /** Start Zigbee Stack. */
-    zb_err_code = zboss_start_no_autostart();
+    zb_ret_t zb_err_code = zboss_start_no_autostart();
     ZB_ERROR_CHECK(zb_err_code);
 
     return 1;

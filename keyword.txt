@@ -9,6 +9,7 @@
 ArduinoZigbee	KEYWORD1
 Zigbee	KEYWORD1
 ZigbeeDimmableLight KEYWORD1
+ZigbeeTemperatureSensor KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -16,6 +17,8 @@ ZigbeeDimmableLight KEYWORD1
 begin	KEYWORD2
 poll	KEYWORD2
 end	KEYWORD2
+addEndpoint KEYWORD2
+setDeviceName KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

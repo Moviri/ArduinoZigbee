@@ -22,12 +22,17 @@ float tempSensorCB_1() {
   return float(random(10.0,20.0)); 
 }
 
-DimmableLight(dimLightCB_1);
-TemperatureSensor(tempSensorCB_1);
+ZigbeeDimmableLight light(dimLightCB_1);
+ZigbeeTemperatureSensor temperature_sensor(tempSensorCB_1);
 
 void setup() {
-  ZIGBEE.begin(1 << 11);
+  ZIGBEE.addEndpoint(light);
+  ZIGBEE.addEndpoint(temperature_sensor);
+  ZIGBEE.setDeviceName("Mixed Endpoint");
+
+  ZIGBEE.begin(11);
 }
+
 void loop() {
   ZIGBEE.poll();
 }

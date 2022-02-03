@@ -16,13 +16,13 @@ float tempSensorCB_1() {
   return float(random(20.0,28.0)); 
 }
 
-#define EP_1 15
-
-TemperatureSensor(tempSensorCB_1);
+ZigbeeTemperatureSensor temperature_sensor(tempSensorCB_1);
 
 void setup() {
-  ZIGBEE.begin(1 << 11);
+  ZIGBEE.addEndpoint(temperature_sensor);
+  ZIGBEE.begin(11);
 }
+
 void loop() {
   ZIGBEE.poll();
 }
