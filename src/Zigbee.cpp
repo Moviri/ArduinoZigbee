@@ -48,7 +48,7 @@ Zigbee &ZIGBEE = Zigbee::getInstance();
 
 zb_af_device_ctx_t dev_ctx;
 
-static zb_void_t zcl_device_cb(zb_bufid_t bufid)  // TODO: review how single CB_ID are managed. We should avoid function specific to a particular device(light, thermostat,...)
+static zb_void_t zcl_device_cb(zb_bufid_t bufid)
 {
     zb_uint8_t cluster_id;
     zb_uint8_t attr_id;
