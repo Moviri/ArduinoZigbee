@@ -33,6 +33,17 @@ public:
     /* Virtual methods for cluster management */
     virtual void setAttribute(zb_zcl_set_attr_value_param_t *attr_p);
     virtual void setLevelControl(zb_zcl_level_control_set_value_param_t level_p);
+
+    typedef struct
+    {
+        zb_uint16_t cluster_revision_identify_attr_list;
+        zb_zcl_attr_t identify_attr_list[3];
+        zb_bool_t device_enable_basic_attr_list;
+        zb_uint16_t cluster_revision_basic_attr_list;
+        zb_zcl_attr_t basic_attr_list[14];
+    } ZbossData;
+
+    ZbossData m_zboss_data;
 };
 
 #endif
