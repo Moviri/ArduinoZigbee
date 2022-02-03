@@ -19,8 +19,6 @@ float tempSensorCB_1() {
   return HTS.readTemperature(); 
 }
 
-#define EP_1 15
-
 TemperatureSensor(tempSensorCB_1);
 
 void setup() {
@@ -34,7 +32,7 @@ void setup() {
   }
   Serial.println("Sensors initialized!");
 
-  ZIGBEE.begin(1 << 25);
+  ZIGBEE.begin(1 << 11);
 }
 void loop() {
   ZIGBEE.poll();

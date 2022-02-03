@@ -8,12 +8,9 @@ void dimLightCB_2(const uint8_t brightness_level) {
   analogWrite(LEDG, 255 - brightness_level);
 }
 
-#define EP_1 12
-#define EP_2 13
-
 //name, endpoint id, callback
-DimmableLight(light_1, EP_1, dimLightCB_1);
-DimmableLight(light_2, EP_2, dimLightCB_2);
+DimmableLight(dimLightCB_1);
+DimmableLight(dimLightCB_2);
 
 void setup() {
   /*
@@ -24,7 +21,7 @@ void setup() {
   zb_uint8_t zb_zll_tc_key[] = ZB_ZLL_TC_KEY;
   ZIGBEE.setTrustCenterKey(zb_zll_tc_key);
   */
-  ZIGBEE.begin();
+  ZIGBEE.begin(1 << 25);
 }
 void loop() {
   ZIGBEE.poll();
