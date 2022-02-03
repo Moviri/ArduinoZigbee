@@ -2,11 +2,11 @@
   Zigbee HA Dimmable Light example
 
   This example creates a zigbee device following the HA(Home Automation) profile.
-  It uses the onboard RGB led of an Arduino Nano 33 BLE Sense to simulate to
+  It uses the onboard led of an nRF52840DK board to simulate a
   dimmable lights.
 
   The circuit:
-  - Arduino Nano 33 BLE Sense
+  - nRF52840DK board
 
   This example code is in the public domain.
 */
@@ -14,15 +14,10 @@
 #include <ArduinoZigbee.h>
 
 void dimLightCB_1(const uint8_t brightness_level) {
-  analogWrite(LEDR, 255 - brightness_level);
-}
-
-void dimLightCB_2(const uint8_t brightness_level) {
-  analogWrite(LEDG, 255 - brightness_level);
+  analogWrite(LED_BUILTIN, 255 - brightness_level);
 }
 
 DimmableLight(dimLightCB_1);
-DimmableLight(dimLightCB_2);
 
 void setup() {
   /*
