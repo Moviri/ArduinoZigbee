@@ -8,7 +8,6 @@ extern "C"
 #include "zboss_api_addons.h"
 #include "zb_error_handler.h"
 }
-#include "../endpoint_enum.h"
 #include "../endpoint_ctx.h"
 
 
@@ -52,7 +51,7 @@ public:
                                            temp_sens_##CB.ep_id,                                               \
                                            temperature_sensor_clusters_##CB);                                  \
     bool ep_desc##CB = temp_sens_##CB.set_desc(&temperature_sensor_ep_##CB);                                   \
-    int test_i##CB = Zigbee::getInstance().addEP(&temp_sens_##CB);
+    int ep_add##CB = Zigbee::getInstance().addEP(&temp_sens_##CB);
 
 #define ZB_HA_DECLARE_TEMPERATURE_SENSOR_EP_VA(ep_name, ep_id, cluster_list)        \
     ZB_ZCL_DECLARE_TEMPERATURE_SENSOR_SIMPLE_DESC_VA(                               \

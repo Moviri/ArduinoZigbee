@@ -42,6 +42,10 @@ public:
         ep_desc = ep_desc_p;
         return 1;
     }
+
+    /* Virtual methods for cluster management */
+    virtual void setAttribute(zb_zcl_set_attr_value_param_t * attr_p);
+    virtual void setLevelControl(zb_zcl_level_control_set_value_param_t level_p);
 };
 
 #endif

@@ -44,6 +44,7 @@ public:
   int addEP(EndpointCTX* ep_ctx);
 
   static zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid);
+  static EndpointCTX* getEndpointByID(uint8_t ep_id);
 
 private:
     void update_endpoints();

@@ -57,14 +57,18 @@ static zb_void_t zcl_device_cb(zb_bufid_t bufid)  // TODO: review how single CB_
     /* Set default response value. */
     p_device_cb_param->status = RET_OK;
 
+    EndpointCTX* ep_ctx = Zigbee::getEndpointByID(p_device_cb_param->endpoint);
+
     switch (p_device_cb_param->device_cb_id)
     {
     case ZB_ZCL_LEVEL_CONTROL_SET_VALUE_CB_ID: // Inform user about ZCL Level Control cluster attributes value modification
-        zb_light_set_level(p_device_cb_param->endpoint, p_device_cb_param->cb_param.level_control_set_value_param.new_value);
+        //zb_light_set_level(p_device_cb_param->endpoint, p_device_cb_param->cb_param.level_control_set_value_param.new_value);
+        ep_ctx->setLevelControl(p_device_cb_param->cb_param.level_control_set_value_param);
         break;
 
     case ZB_ZCL_SET_ATTR_VALUE_CB_ID: // Inform user about attribute value modification
-        zb_light_set_attribute(p_device_cb_param->endpoint, &p_device_cb_param->cb_param.set_attr_value_param);
+        //zb_light_set_attribute(p_device_cb_param->endpoint, &p_device_cb_param->cb_param.set_attr_value_param);
+        ep_ctx->setAttribute(&p_device_cb_param->cb_param.set_attr_value_param);
         break;
 
     default:
@@ -87,6 +91,17 @@ zb_uint8_t Zigbee::endpoint_CB_wrapper(zb_bufid_t bufid) {
         }
     }
     return ZB_FALSE;
+}
+
+EndpointCTX* Zigbee::getEndpointByID(uint8_t ep_id) {
+    std::vector<EndpointCTX*>& endpoints = Zigbee::getInstance().m_endpoints;
+    for(uint8_t i=0; i<endpoints.size(); i++) {
+        EndpointCTX* endpoint = endpoints[i];
+        if(endpoint->ep_id == ep_id) {
+            return endpoint;
+        }
+    }
+    return NULL;
 }
 
 void Zigbee::init_device_ctx() {

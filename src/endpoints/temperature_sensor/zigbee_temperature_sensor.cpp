@@ -5,7 +5,7 @@
 TemperatureSensorCTX::TemperatureSensorCTX(float period_p, float (*aTempCB)()) : EndpointCTX(period_p)
 {
     tempCB = aTempCB;
-    tempCB();   // initialize temperature value to avoid bad read from other devices
+    tempCB(); // initialize temperature value to avoid bad read from other devices
 
     /* Basic cluster attributes data */
     basic_attr.app_version = 01;   /**< Version of the application software (1 byte). */
@@ -31,6 +31,7 @@ TemperatureSensorCTX::TemperatureSensorCTX(float period_p, float (*aTempCB)()) :
                           ZB_ZCL_STRING_CONST_SIZE("Generic"));
 
     basic_attr.ph_env = ZB_ZCL_BASIC_ENV_UNSPECIFIED; /**< Description of the type of physical environment. For possible values, see section 3.2.2.2.10 of the ZCL specification. */
+
 
     /* Temperature measurement cluster attributes data */
     temp_attr.measure_value = ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_UNKNOWN;
