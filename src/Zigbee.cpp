@@ -26,7 +26,6 @@ extern "C" {
 #include "zboss_api_addons.h"
 #include "zb_error_handler.h"
 }
-#include "endpoints/endpoint_enum.h"
 #include "endpoints/dimmable_light/zigbee_dimmable_light.h"
 #include "endpoints/temperature_sensor/zigbee_temperature_sensor.h"
 
