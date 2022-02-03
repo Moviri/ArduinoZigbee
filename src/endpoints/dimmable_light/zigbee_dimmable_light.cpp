@@ -38,6 +38,31 @@ DimmableLightCTX::DimmableLightCTX(float period_p, void (*aLightCB)(const uint8_
     level_control_attr.remaining_time = ZB_ZCL_LEVEL_CONTROL_REMAINING_TIME_DEFAULT_VALUE;
 }
 
+zb_uint8_t DimmableLightCTX::endpoint_CB(zb_bufid_t bufid)
+{
+    zb_bufid_t zcl_cmd_buf = bufid;
+    zb_zcl_parsed_hdr_t *cmd_info = ZB_BUF_GET_PARAM(zcl_cmd_buf, zb_zcl_parsed_hdr_t);
+
+    if (    cmd_info->cmd_direction == ZB_ZCL_FRAME_DIRECTION_TO_SRV &&
+            !cmd_info->is_common_command &&
+            cmd_info->cluster_id == ZB_ZCL_CLUSTER_ID_ON_OFF &&
+            cmd_info->cmd_id == ZB_ZCL_CMD_ON_OFF_OFF_WITH_EFFECT_ID)
+    {
+        setState((zb_bool_t)false);
+
+        zb_buf_free(bufid);
+
+        return ZB_TRUE;
+    }
+
+    return ZB_FALSE;
+}
+
+void DimmableLightCTX::periodic_CB()
+{
+    /* Not used */
+}
+
 // static void zb_set_brightness(zb_uint8_t brightness_level, uint8_t ep_id)
 // {
 //     for (uint8_t i = 0; i < current_light_size; i++)
