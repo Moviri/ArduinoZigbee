@@ -20,24 +20,39 @@
 #ifndef _ZIGBEE_H_
 #define _ZIGBEE_H_
 
-#include "ZigbeeEndpoint.h"
+#include <vector>
+#include "endpoints/endpoint_ctx.h"
 
+/**
+ * @brief The Zigbee class is designed to be a singleton object that reprsents the Zigbee stack.
+ */
 class Zigbee {
-public:
+private:
   Zigbee();
-  virtual ~Zigbee();
+  ~Zigbee();
 
-  virtual void setTrustCenterKey(zb_uint8_t *zb_tc_key);
-  virtual int begin(const zb_uint32_t channelMask = ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
-  virtual void end();
+public:
+  Zigbee(Zigbee const&)          = delete;
+  void operator=(Zigbee const&)  = delete;
 
-  virtual void poll();
-  virtual void check_periodic_CB();
-  
-protected:
+  static Zigbee& getInstance();
+
+  void setTrustCenterKey(zb_uint8_t *zb_tc_key);
+  int begin(const zb_uint32_t channelMask = ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
+  void end();
+  void poll();
+  int addEP(EndpointCTX* ep_ctx);
+
+  static zb_uint8_t endpoint_CB_wrapper(zb_bufid_t bufid);
+  static EndpointCTX* getEndpointByID(uint8_t ep_id);
 
 private:
-    zb_uint8_t *zb_tc_key;
+    void update_endpoints();
+    void init_device_ctx();
+    int init_device();
+
+    zb_uint8_t *m_zb_tc_key;
+    std::vector<EndpointCTX*> m_endpoints;
 };
 
 extern Zigbee& ZIGBEE;
