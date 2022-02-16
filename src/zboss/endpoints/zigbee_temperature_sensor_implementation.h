@@ -15,13 +15,12 @@ class ZigbeeTemperatureSensor;
 class ZigbeeTemperatureSensorImplementation : public ZigbeeEndpointImplementation
 {
 public:
-    ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *parent,
+    ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface,
                                           zb_char_t model_id[] = "Temperature Sensor v1",
                                           unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
 
     zb_uint8_t processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params) override;
     void update() override;
-    void setup();
 
 private:
     typedef struct zb_af_simple_desc_temperature_sensor
@@ -50,7 +49,8 @@ private:
     } ZbossSpecificData;
 
     ZbossSpecificData m_zboss_data;
-    ZigbeeTemperatureSensor *const m_parent;
+    /** Backpointer to the visible object. */
+    ZigbeeTemperatureSensor *const m_interface;
 };
 
-#endif // ZIGBEE_TEMP_SENS_H__
+#endif // ZIGBEE_TEMP_SENSOR_IMPLEMENTATION_H_

@@ -6,7 +6,6 @@
 ZigbeeTemperatureSensor::ZigbeeTemperatureSensor(ReadTemperatureCallback callback, char model_id[], unsigned int power_source_type) : ZigbeeEndpoint(new ZigbeeTemperatureSensorImplementation(this, model_id, power_source_type)),
                                                                                                                                       m_read_temperature(callback)
 {
-    implementation()->setup();
 }
 
 ZigbeeTemperatureSensor::~ZigbeeTemperatureSensor() {}

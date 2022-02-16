@@ -4,7 +4,9 @@
 static const char kZigbeeManufacturerName[] = "Arduino";
 static const char kZigbeeDate[] = "20210911";
 
-ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(char model_id[], unsigned int power_source_type)
+uint8_t ZigbeeEndpointImplementation::m_ep_id_counter = 0;
+
+ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(char model_id[], unsigned int power_source_type) : m_endpoint_id(++m_ep_id_counter)
 {
     memset(&m_zboss_basic_data, 0, sizeof(m_zboss_basic_data));
     /* Basic cluster attributes data */
@@ -135,7 +137,8 @@ void ZigbeeEndpointImplementation::feedbackEffect(zb_zcl_identify_effect_value_p
     }
 }
 
-void ZigbeeEndpointImplementation::setModelID(char model_id[]) {
+void ZigbeeEndpointImplementation::setModelID(char model_id[])
+{
     /* Basic cluster attributes data
      * Note: the string is copied in a ZB_STRING that is a char array where the first byte is used to store the length and the "\0"
      * string terminator is not copied. */
@@ -144,3 +147,7 @@ void ZigbeeEndpointImplementation::setModelID(char model_id[]) {
                           MIN(strlen(model_id), sizeof(m_zboss_basic_data.basic_attr.model_id) - 1));
 }
 
+uint8_t ZigbeeEndpointImplementation::endpointId() const
+{
+    return m_endpoint_id;
+}

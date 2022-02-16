@@ -1,5 +1,5 @@
-#ifndef _EP_CTX_H_
-#define _EP_CTX_H_
+#ifndef ZIGBEE_ENDPOINT_H_
+#define ZIGBEE_ENDPOINT_H_
 
 #include <stdint.h>
 #include <memory>
@@ -8,10 +8,11 @@ class ZigbeeEndpointImplementation;
 
 class ZigbeeEndpoint
 {
-public:
+protected:
     ZigbeeEndpoint(ZigbeeEndpointImplementation *impl);
     ~ZigbeeEndpoint();
 
+public:
     /** Inform the endpoint about the current time so that it can perform its update. */
     void poll(uint32_t current_time);
     /** Periodic endpoint update. */
@@ -29,16 +30,13 @@ public:
     void operator=(ZigbeeEndpoint const &) = delete;
 
 protected:
-    /** [1, 240] Endpoint ID counter for automatic EP ID generation */
-    static uint8_t m_ep_id_counter;
-
     const uint8_t m_endpoint_id;
 
     /** Milliseconds between two perodic events */
     uint32_t m_period;
     /** Last time step at which periodic_CB() has been triggered */
     uint32_t m_last_update_time;
-    /* Private implementation (PIMPL) opaque pointer. */
+    /* Pointer to implementation (PIMPL) opaque pointer. */
     std::unique_ptr<ZigbeeEndpointImplementation> const m_impl;
     friend class ZigbeeEndpointImplementation;
 };

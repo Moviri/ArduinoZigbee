@@ -15,7 +15,7 @@ class ZigbeeDimmableLight;
 class ZigbeeDimmableLightImplementation : public ZigbeeEndpointImplementation
 {
 public:
-    ZigbeeDimmableLightImplementation(ZigbeeDimmableLight *parent,
+    ZigbeeDimmableLightImplementation(ZigbeeDimmableLight *interface,
                                       zb_char_t model_id[] = "Dimmable Light v1",
                                       unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
 
@@ -34,8 +34,6 @@ public:
      * @param[in] value = true or false
      */
     void setState(zb_bool_t value);
-
-    void setup();
 
 private:
     zb_uint8_t setAttribute(zb_zcl_set_attr_value_param_t *attr_p);
@@ -77,7 +75,8 @@ private:
     } ZbossSpecificData;
 
     ZbossSpecificData m_zboss_data;
-    ZigbeeDimmableLight *const m_parent;
+    /** Backpointer to the visible object. */
+    ZigbeeDimmableLight *const m_interface;
 };
 
-#endif // ZIGBEE_DIM_LIGHT_H__
+#endif // ZIGBEE_DIM_LIGHT_IMPLEMENTATION_H_

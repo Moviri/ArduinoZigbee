@@ -3,8 +3,9 @@
 #include "../../endpoints/zigbee_dimmable_light.h"
 #include <vector>
 
-ZigbeeDimmableLightImplementation::ZigbeeDimmableLightImplementation(ZigbeeDimmableLight *parent, zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_parent(parent)
+ZigbeeDimmableLightImplementation::ZigbeeDimmableLightImplementation(ZigbeeDimmableLight *interface, zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
 {
+    /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
     memset(&m_zboss_data, 0, sizeof(m_zboss_data));
 
     /* On/Off cluster attributes data */
@@ -66,6 +67,33 @@ ZigbeeDimmableLightImplementation::ZigbeeDimmableLightImplementation(ZigbeeDimma
         {(0x0008U), ((sizeof(m_zboss_data.level_control_attr_list) / sizeof(zb_zcl_attr_t))), ((m_zboss_data.level_control_attr_list)), (0x01U), (0x0000), (((0x01U) == 0x01U) ? zb_zcl_level_control_init_server : (((0x01U) == 0x02U) ? zb_zcl_level_control_init_client : __null))}};
     static_assert(sizeof(m_zboss_data.dimmable_light_clusters) == sizeof(dimmable_light_clusters), "Check vector size");
     memcpy(m_zboss_data.dimmable_light_clusters, dimmable_light_clusters, sizeof(dimmable_light_clusters));
+
+    m_zboss_data.simple_desc = {
+        m_endpoint_id,
+        0x0104U,
+        ZB_HA_DIMMABLE_LIGHT_DEVICE_ID,
+        1,
+        0,
+        6,
+        0,
+        {0x0000U, 0x0003U, 0x0005U, 0x0004U, 0x0006U, 0x0008U}};
+
+    m_zboss_data.dimmable_light_ep = {
+        m_endpoint_id,
+        0x0104U,
+        __null,
+        __null,
+        0,
+        (void *)__null,
+        (sizeof(m_zboss_data.dimmable_light_clusters) / sizeof(zb_zcl_cluster_desc_t)),
+        m_zboss_data.dimmable_light_clusters,
+        (zb_af_simple_desc_1_1_t *)&m_zboss_data.simple_desc,
+        (1 + 1),
+        m_zboss_data.reporting_infodimmable_light,
+        1,
+        m_zboss_data.cvc_alarm_infodimmable_light};
+
+    setDescriptor(&m_zboss_data.dimmable_light_ep);
 }
 
 zb_uint8_t ZigbeeDimmableLightImplementation::processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params)
@@ -106,36 +134,6 @@ zb_ret_t ZigbeeDimmableLightImplementation::processCommandDV(zb_zcl_device_callb
     }
 }
 
-void ZigbeeDimmableLightImplementation::setup()
-{
-    m_zboss_data.simple_desc = {
-        m_parent->endpointId(),
-        0x0104U,
-        ZB_HA_DIMMABLE_LIGHT_DEVICE_ID,
-        1,
-        0,
-        6,
-        0,
-        {0x0000U, 0x0003U, 0x0005U, 0x0004U, 0x0006U, 0x0008U}};
-
-    m_zboss_data.dimmable_light_ep = {
-        m_parent->endpointId(),
-        0x0104U,
-        __null,
-        __null,
-        0,
-        (void *)__null,
-        (sizeof(m_zboss_data.dimmable_light_clusters) / sizeof(zb_zcl_cluster_desc_t)),
-        m_zboss_data.dimmable_light_clusters,
-        (zb_af_simple_desc_1_1_t *)&m_zboss_data.simple_desc,
-        (1 + 1),
-        m_zboss_data.reporting_infodimmable_light,
-        1,
-        m_zboss_data.cvc_alarm_infodimmable_light};
-
-    setDescriptor(&m_zboss_data.dimmable_light_ep);
-}
-
 zb_uint8_t ZigbeeDimmableLightImplementation::setAttribute(zb_zcl_set_attr_value_param_t *attr_p)
 {
     switch (attr_p->cluster_id)
@@ -167,7 +165,7 @@ zb_uint8_t ZigbeeDimmableLightImplementation::setAttribute(zb_zcl_set_attr_value
 
 void ZigbeeDimmableLightImplementation::setBrightness(zb_uint8_t value)
 {
-    ZB_ZCL_SET_ATTRIBUTE(m_parent->endpointId(),
+    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
                          ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
                          ZB_ZCL_CLUSTER_SERVER_ROLE,
                          ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
@@ -175,19 +173,19 @@ void ZigbeeDimmableLightImplementation::setBrightness(zb_uint8_t value)
                          ZB_FALSE);
 
     zb_uint8_t value_onoff = (value == 0) ? ZB_FALSE : ZB_TRUE;
-    ZB_ZCL_SET_ATTRIBUTE(m_parent->endpointId(),
+    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
                          ZB_ZCL_CLUSTER_ID_ON_OFF,
                          ZB_ZCL_CLUSTER_SERVER_ROLE,
                          ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
                          &value_onoff,
                          ZB_FALSE);
 
-    m_parent->m_write_brightness(value);
+    m_interface->m_write_brightness(value);
 }
 
 void ZigbeeDimmableLightImplementation::setState(zb_bool_t value)
 {
-    ZB_ZCL_SET_ATTRIBUTE(m_parent->endpointId(),
+    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
                          ZB_ZCL_CLUSTER_ID_ON_OFF,
                          ZB_ZCL_CLUSTER_SERVER_ROLE,
                          ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
@@ -200,6 +198,6 @@ void ZigbeeDimmableLightImplementation::setState(zb_bool_t value)
     }
     else
     {
-        m_parent->m_write_brightness(0);
+        m_interface->m_write_brightness(0);
     }
 }

@@ -1,9 +1,7 @@
 #include "zigbee_endpoint.h"
 #include "../zboss/endpoints/zigbee_endpoint_implementation.h"
 
-uint8_t ZigbeeEndpoint::m_ep_id_counter = 0;
-
-ZigbeeEndpoint::ZigbeeEndpoint(ZigbeeEndpointImplementation *impl) : m_endpoint_id(++m_ep_id_counter),
+ZigbeeEndpoint::ZigbeeEndpoint(ZigbeeEndpointImplementation *impl) : m_endpoint_id(impl->endpointId()),
                                                                      m_period(UINT32_MAX),
                                                                      m_last_update_time(0),
                                                                      m_impl(impl)

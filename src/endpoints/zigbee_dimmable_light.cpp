@@ -6,7 +6,6 @@
 ZigbeeDimmableLight::ZigbeeDimmableLight(WriteBrightnessCallback callback, char model_id[], unsigned int power_source_type) : ZigbeeEndpoint(new ZigbeeDimmableLightImplementation(this, model_id, power_source_type)),
                                                                                                                               m_write_brightness(callback)
 {
-    implementation()->setup();
 }
 
 ZigbeeDimmableLight::~ZigbeeDimmableLight() {}

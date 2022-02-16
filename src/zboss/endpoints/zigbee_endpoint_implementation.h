@@ -11,9 +11,10 @@ extern "C"
 
 class ZigbeeEndpointImplementation
 {
-public:
+protected:
     ZigbeeEndpointImplementation(char model_id[], unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
 
+public:
     /** Periodic endpoint update. */
     virtual void update();
     /** Handle a command received from the Zboss stack. */
@@ -24,6 +25,8 @@ public:
     virtual void feedbackEffect(zb_zcl_identify_effect_value_param_t *idt_params);
     /** Set the model id attribute **/
     void setModelID(char model_id[]);
+
+    uint8_t endpointId() const;
 
     zb_af_endpoint_desc_t *endpointDescriptor() const;
 
@@ -49,10 +52,16 @@ protected:
         zb_zcl_attr_t basic_attr_list[14];
     } ZbossData;
 
+    /** Endpoint identifier: from 1 to 244. */
+    const uint8_t m_endpoint_id;
     /** Endpoint description for user applications */
     zb_af_endpoint_desc_t *m_endpoint_descriptor;
 
     ZbossData m_zboss_basic_data;
+
+private:
+    /** [1, 240] Endpoint ID counter for automatic endpoint ID generation */
+    static uint8_t m_ep_id_counter;
 };
 
 #endif
