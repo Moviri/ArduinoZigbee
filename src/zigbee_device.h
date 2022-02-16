@@ -98,7 +98,7 @@ public:
     void operator=(ZigbeeDevice const &) = delete;
 
 private:
-    /* Private implementation (PIMPL) opaque pointer. */
+    /* Pointer to implementation (PIMPL) opaque pointer. */
     std::unique_ptr<ZigbeeDeviceImplementation> const m_impl;
     friend class ZigbeeDevice;
 };
