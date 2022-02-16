@@ -23,6 +23,5 @@
 #include "zigbee_device.h"
 #include "endpoints/zigbee_dimmable_light.h"
 #include "endpoints/zigbee_temperature_sensor.h"
-#include "endpoints/zigbee_endpoint.h"
 
 #endif

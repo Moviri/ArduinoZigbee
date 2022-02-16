@@ -21,7 +21,10 @@
 #define ZIGBEE_DEVICE_H_
 
 #include <vector>
-#include "endpoints/zigbee_endpoint.h"
+#include <memory>
+
+class ZigbeeEndpoint;
+class ZigbeeDeviceImplementation;
 
 /**
  * @brief The Zigbee class is designed to be a singleton object that reprsents the Zigbee local device.
@@ -34,9 +37,9 @@ private:
 
 public:
     /** The first channel available for Zigbee communication */
-    const unsigned int kFirstChannel = 11;
+    static const unsigned int kFirstChannel = 11;
     /** The last channel available for Zigbee communication */
-    const unsigned int kLastChannel = 25;
+    static const unsigned int kLastChannel = 25;
     /**
      * @brief Get the unique instance of this class.
      *
@@ -44,14 +47,14 @@ public:
      */
     static ZigbeeDevice &getInstance();
 
-    void setTrustCenterKey(zb_uint8_t *zb_tc_key);
+    void setTrustCenterKey(unsigned char *key);
 
     /**
      * @brief Start Zigbee communication
      * @param[in] channel = the channel to be used for Zigbee communication. If the channel is not set all the channels are used.
      * @return 0 if it succeeds.
      */
-    int begin(const zb_uint32_t channel = 0);
+    int begin(const unsigned int channel = 0);
 
     /**
      * @brief Start Zigbee communication.
@@ -60,7 +63,7 @@ public:
      * @param[in] channels = the channels to be used for Zigbee communication. If no channel is set all the channels are used.
      * @return 0 if it succeeds.
      */
-    int begin(const std::vector<zb_uint32_t> channels = {});
+    int begin(const std::vector<unsigned int> channels = {});
 
     /**
      * @brief Stop Zigbee communication
@@ -85,9 +88,9 @@ public:
      *
      * @param model_id = string containing device name
      */
-    void setDeviceName(zb_char_t model_id[]);
+    void setDeviceName(char model_id[]);
 
-    ZigbeeEndpoint *getEndpointByID(uint8_t ep_id) const;
+    ZigbeeEndpoint *getEndpointByID(unsigned char id) const;
 
     /* Delete the copy constructor. */
     ZigbeeDevice(ZigbeeDevice const &) = delete;
@@ -95,14 +98,10 @@ public:
     void operator=(ZigbeeDevice const &) = delete;
 
 private:
-    void updateEndpoints();
-    void initDeviceContext();
-    int initDevice();
-
-    zb_uint8_t *m_zb_tc_key;
-    zb_af_device_ctx_t m_dev_ctx;
-    std::vector<ZigbeeEndpoint *> m_endpoints;
+    /* Private implementation (PIMPL) opaque pointer. */
+    std::unique_ptr<ZigbeeDeviceImplementation> const m_impl;
+    friend class ZigbeeDevice;
 };
 
 extern ZigbeeDevice &ZIGBEE;
-#endif // ZIGBEE_DEVICE_H_
+#endif
