@@ -3,8 +3,8 @@
 #include "../zboss/endpoints/zigbee_temperature_sensor_implementation.h"
 #include <vector>
 
-ZigbeeTemperatureSensor::ZigbeeTemperatureSensor(ReadTemperatureCallback callback, char model_id[], unsigned int power_source_type) : ZigbeeEndpoint(new ZigbeeTemperatureSensorImplementation(this, model_id, power_source_type)),
-                                                                                                                                      m_read_temperature(callback)
+ZigbeeTemperatureSensor::ZigbeeTemperatureSensor(ReadTemperatureCallback callback, const char model_id[], unsigned int power_source_type) : ZigbeeEndpoint(new ZigbeeTemperatureSensorImplementation(this, model_id, power_source_type)),
+                                                                                                                                            m_read_temperature(callback)
 {
 }
 

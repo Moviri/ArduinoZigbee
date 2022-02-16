@@ -3,7 +3,7 @@
 #include "../../endpoints/zigbee_temperature_sensor.h"
 #include <vector>
 
-ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
+ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
 {
     /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
     memset(&m_zboss_data, 0, sizeof(m_zboss_data));

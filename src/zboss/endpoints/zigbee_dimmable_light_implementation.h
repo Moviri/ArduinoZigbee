@@ -16,7 +16,7 @@ class ZigbeeDimmableLightImplementation : public ZigbeeEndpointImplementation
 {
 public:
     ZigbeeDimmableLightImplementation(ZigbeeDimmableLight *interface,
-                                      zb_char_t model_id[] = "Dimmable Light v1",
+                                      const zb_char_t model_id[] = "Dimmable Light v1",
                                       unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
 
     /** Callback for ep specific events */

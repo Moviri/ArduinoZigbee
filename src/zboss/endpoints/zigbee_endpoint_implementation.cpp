@@ -6,7 +6,7 @@ static const char kZigbeeDate[] = "20210911";
 
 uint8_t ZigbeeEndpointImplementation::m_ep_id_counter = 0;
 
-ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(char model_id[], unsigned int power_source_type) : m_endpoint_id(++m_ep_id_counter)
+ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(const char model_id[], unsigned int power_source_type) : m_endpoint_id(++m_ep_id_counter)
 {
     memset(&m_zboss_basic_data, 0, sizeof(m_zboss_basic_data));
     /* Basic cluster attributes data */

@@ -12,7 +12,7 @@ extern "C"
 class ZigbeeEndpointImplementation
 {
 protected:
-    ZigbeeEndpointImplementation(char model_id[], unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
+    ZigbeeEndpointImplementation(const char model_id[], unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
 
 public:
     /** Periodic endpoint update. */

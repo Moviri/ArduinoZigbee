@@ -16,7 +16,7 @@ class ZigbeeTemperatureSensorImplementation : public ZigbeeEndpointImplementatio
 {
 public:
     ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface,
-                                          zb_char_t model_id[] = "Temperature Sensor v1",
+                                          const zb_char_t model_id[] = "Temperature Sensor v1",
                                           unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
 
     zb_uint8_t processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params) override;

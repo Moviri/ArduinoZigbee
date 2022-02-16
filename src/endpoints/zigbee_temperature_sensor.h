@@ -12,7 +12,7 @@ public:
     typedef float (*ReadTemperatureCallback)();
 
     ZigbeeTemperatureSensor(ReadTemperatureCallback callback,
-                            char model_id[] = "Temperature Sensor v1",
+                            const char model_id[] = "Temperature Sensor v1",
                             unsigned int power_source_type = 0);
     ~ZigbeeTemperatureSensor();
 

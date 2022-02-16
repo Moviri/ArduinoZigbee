@@ -12,7 +12,7 @@ public:
     typedef void (*WriteBrightnessCallback)(const uint8_t brightness_level);
 
     ZigbeeDimmableLight(WriteBrightnessCallback callback,
-                        char model_id[] = "Dimmable Light v1",
+                        const char model_id[] = "Dimmable Light v1",
                         unsigned int power_source_type = 0);
     ~ZigbeeDimmableLight();
 

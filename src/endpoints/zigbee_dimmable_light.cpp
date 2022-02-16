@@ -3,7 +3,7 @@
 #include "../zboss/endpoints/zigbee_dimmable_light_implementation.h"
 #include <vector>
 
-ZigbeeDimmableLight::ZigbeeDimmableLight(WriteBrightnessCallback callback, char model_id[], unsigned int power_source_type) : ZigbeeEndpoint(new ZigbeeDimmableLightImplementation(this, model_id, power_source_type)),
+ZigbeeDimmableLight::ZigbeeDimmableLight(WriteBrightnessCallback callback, const char model_id[], unsigned int power_source_type) : ZigbeeEndpoint(new ZigbeeDimmableLightImplementation(this, model_id, power_source_type)),
                                                                                                                               m_write_brightness(callback)
 {
 }
