@@ -67,10 +67,14 @@ zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bu
         cmd_params->cluster_id == ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT &&
         cmd_params->cmd_id == ZB_ZCL_CMD_CONFIG_REPORT)
     {
-        zb_zcl_configure_reporting_req_t *config_rep_req;
-        ZB_ZCL_GENERAL_GET_NEXT_CONFIGURE_REPORTING_REQ(bufid, config_rep_req);
+        // zb_zcl_configure_reporting_req_t *config_rep_req;
+        // ZB_ZCL_GENERAL_GET_NEXT_CONFIGURE_REPORTING_REQ(bufid, config_rep_req);
 
-        m_interface->m_period = config_rep_req->u.clnt.min_interval * 1000;
+        // m_interface->m_period = config_rep_req->u.clnt.min_interval * 1000;
+
+        // TODO: Solve bug on malformed report configuration response
+
+        m_interface->m_period = 30000;
     }
     else if (cmd_params->cmd_direction == ZB_ZCL_FRAME_DIRECTION_TO_SRV &&
              cmd_params->is_common_command &&
