@@ -20,8 +20,6 @@ extern "C"
 
 /** The maximum amount of connected devices. Setting this value to 0 disables association to this device.  */
 #define MAX_CHILDREN 10
-/** Do not erase NVRAM to save the network parameters after device reboot or power-off. */                     
-#define ERASE_PERSISTENT_CONFIG ZB_TRUE
 
 extern "C"
 {
@@ -41,7 +39,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
     }
 }
 
-static int zigbee_init(const zb_uint32_t channel_mask)
+static int zigbee_init(const zb_uint32_t channel_mask, zb_bool_t erase_mem)
 {
     zb_ieee_addr_t ieee_addr;
 
@@ -55,7 +53,7 @@ static int zigbee_init(const zb_uint32_t channel_mask)
     /* Set static long IEEE address. */
     zb_set_network_router_role(channel_mask);
     zb_set_max_children(MAX_CHILDREN);
-    zigbee_erase_persistent_storage(ERASE_PERSISTENT_CONFIG);
+    zigbee_erase_persistent_storage(erase_mem);
     zb_set_keepalive_timeout(ZB_MILLISECONDS_TO_BEACON_INTERVAL(3000));
     return 1;
 }
@@ -181,7 +179,7 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     PalBbSetProtId(BB_PROT_15P4);
     PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
 
-    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask);
+    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemomryToErase());
     if (m_trust_center_key != nullptr)
     {
         zb_zdo_set_tc_standard_distributed_key(m_trust_center_key);
@@ -217,6 +215,15 @@ void ZigbeeDeviceImplementation::setDeviceName(char model_id[])
     {
         m_endpoints[0]->implementation()->setModelID(model_id);
     }
+}
+
+void ZigbeeDeviceImplementation::eraseMemory()
+{
+    m_erase_persistent_mem = ZB_TRUE;
+}
+
+zb_bool_t ZigbeeDeviceImplementation::isMemomryToErase() {
+    return m_erase_persistent_mem;
 }
 
 void ZigbeeDeviceImplementation::updateEndpoints()

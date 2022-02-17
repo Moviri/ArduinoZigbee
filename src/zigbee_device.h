@@ -90,6 +90,13 @@ public:
      */
     void setDeviceName(char model_id[]);
 
+    /**
+     * @brief Erase peristent memory on startup
+     * 
+     * @param erase = true if we want to erase memory, false otherwise
+     */
+    void eraseMemory();
+
     ZigbeeEndpoint *getEndpointByID(unsigned char id) const;
 
     /* Delete the copy constructor. */
