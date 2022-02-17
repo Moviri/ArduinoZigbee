@@ -53,7 +53,18 @@ public:
      */
     void setDeviceName(char model_id[]);
 
+    /**
+     * @brief Erase peristent memory on startup
+     * 
+     * @param erase = true if we want to erase memory, false otherwise
+     */
+    void eraseMemory();
+
+    zb_bool_t isMemomryToErase();
+
     ZigbeeEndpoint *getEndpointByID(uint8_t id) const;
+
+    
 
 private:
     void updateEndpoints();
@@ -63,6 +74,7 @@ private:
     unsigned char *m_trust_center_key;
     zb_af_device_ctx_t m_context;
     std::vector<ZigbeeEndpoint *> m_endpoints;
+    zb_bool_t m_erase_persistent_mem = ZB_FALSE;
 };
 
 #endif

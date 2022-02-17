@@ -82,3 +82,7 @@ void ZigbeeDevice::setDeviceName(char model_id[])
 {
     m_impl->setDeviceName(model_id);
 }
+
+void ZigbeeDevice::eraseMemory() {
+    m_impl->eraseMemory();
+}
