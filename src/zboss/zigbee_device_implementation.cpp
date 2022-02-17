@@ -179,7 +179,7 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     PalBbSetProtId(BB_PROT_15P4);
     PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
 
-    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemomryToErase());
+    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemoryToErase());
     if (m_trust_center_key != nullptr)
     {
         zb_zdo_set_tc_standard_distributed_key(m_trust_center_key);
@@ -187,6 +187,14 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     }
 
     initDevice();
+    if (!isMemoryToErase())
+    {
+        for (ZigbeeEndpoint *endpoint : m_endpoints)
+        {
+            endpoint->implementation()->restoreReportingConfig();
+        }
+    }
+
     return (zigbee_start() == RET_OK) ? 0 : -1;
 }
 
@@ -222,7 +230,8 @@ void ZigbeeDeviceImplementation::eraseMemory()
     m_erase_persistent_mem = ZB_TRUE;
 }
 
-zb_bool_t ZigbeeDeviceImplementation::isMemomryToErase() {
+zb_bool_t ZigbeeDeviceImplementation::isMemoryToErase()
+{
     return m_erase_persistent_mem;
 }
 

@@ -23,6 +23,8 @@ public:
     virtual zb_ret_t processCommandDV(zb_zcl_device_callback_param_t *cmd_params);
     /** Identify effect handler **/
     virtual void feedbackEffect(zb_zcl_identify_effect_value_param_t *idt_params);
+    /** Called to restore polling period */
+    virtual void restoreReportingConfig();
     /** Set the model id attribute **/
     void setModelID(char model_id[]);
 

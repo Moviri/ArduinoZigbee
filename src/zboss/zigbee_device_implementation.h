@@ -60,8 +60,6 @@ public:
      */
     void eraseMemory();
 
-    zb_bool_t isMemomryToErase();
-
     ZigbeeEndpoint *getEndpointByID(uint8_t id) const;
 
     
@@ -70,6 +68,7 @@ private:
     void updateEndpoints();
     void initDeviceContext();
     int initDevice();
+    zb_bool_t isMemoryToErase();
 
     unsigned char *m_trust_center_key;
     zb_af_device_ctx_t m_context;

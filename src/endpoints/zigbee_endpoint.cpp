@@ -2,7 +2,7 @@
 #include "../zboss/endpoints/zigbee_endpoint_implementation.h"
 
 ZigbeeEndpoint::ZigbeeEndpoint(ZigbeeEndpointImplementation *impl) : m_endpoint_id(impl->endpointId()),
-                                                                     m_period(30000),  // TODO: hardcoded to fix bug. Need to get the reporting period when memory is not erased
+                                                                     m_period(UINT32_MAX),
                                                                      m_last_update_time(0),
                                                                      m_impl(impl)
 {
