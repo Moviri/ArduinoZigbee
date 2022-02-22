@@ -24,7 +24,7 @@ public:
     /** Identify effect handler **/
     virtual void feedbackEffect(zb_zcl_identify_effect_value_param_t *idt_params);
     /** Called to restore polling period */
-    virtual void restoreReportingConfig();
+    virtual void restoreReportingPeriod();
     /** Set the model id attribute **/
     void setModelID(char model_id[]);
 

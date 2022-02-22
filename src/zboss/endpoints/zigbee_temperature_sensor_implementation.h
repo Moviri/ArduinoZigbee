@@ -21,11 +21,9 @@ public:
 
     zb_uint8_t processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params) override;
     void update() override;
-    void restoreReportingConfig() override;
+    void restoreReportingPeriod() override;
 
 private:
-    zb_uint16_t m_old_period;
-
     typedef struct zb_af_simple_desc_temperature_sensor
     {
         zb_uint8_t endpoint;

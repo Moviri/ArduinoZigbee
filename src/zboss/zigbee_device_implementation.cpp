@@ -187,15 +187,17 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     }
 
     initDevice();
-    if (!isMemoryToErase())
+
+    int start_ok = (zigbee_start() == RET_OK) ? 0 : -1;
+    if (!isMemoryToErase() && start_ok == 0)
     {
         for (ZigbeeEndpoint *endpoint : m_endpoints)
         {
-            endpoint->implementation()->restoreReportingConfig();
+            endpoint->implementation()->restoreReportingPeriod();
         }
     }
 
-    return (zigbee_start() == RET_OK) ? 0 : -1;
+    return start_ok;
 }
 
 void ZigbeeDeviceImplementation::end()

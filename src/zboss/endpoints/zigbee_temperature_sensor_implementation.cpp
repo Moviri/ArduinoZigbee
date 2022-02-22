@@ -5,8 +5,6 @@
 
 ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
 {
-    /* m_zboss_data.reporting_infotemperature_sensor[0].u.send_info.min_interval; */
-
     /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
     memset(&m_zboss_data, 0, sizeof(m_zboss_data));
 
@@ -101,7 +99,7 @@ void ZigbeeTemperatureSensorImplementation::update()
                                                      ZB_FALSE);
 }
 
-void ZigbeeTemperatureSensorImplementation::restoreReportingConfig()
+void ZigbeeTemperatureSensorImplementation::restoreReportingPeriod()
 {
-    m_interface->m_period = m_old_period;
+    m_interface->m_period = m_zboss_data.reporting_infotemperature_sensor[0].u.send_info.min_interval * 1000;
 }
