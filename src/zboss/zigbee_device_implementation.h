@@ -55,8 +55,6 @@ public:
 
     /**
      * @brief Erase peristent memory on startup
-     * 
-     * @param erase = true if we want to erase memory, false otherwise
      */
     void eraseMemory();
 

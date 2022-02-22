@@ -2,6 +2,7 @@
 #include "zigbee_temperature_sensor_implementation.h"
 #include "../../endpoints/zigbee_temperature_sensor.h"
 #include <vector>
+#include "../util/zcl_payload_reader.h"
 
 ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
 {
@@ -62,6 +63,8 @@ ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(Zig
 
 zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params)
 {
+    ZbossZCLPayloadReader &reader = ZbossZCLPayloadReader::getInstance();
+
     if (cmd_params->cmd_direction == ZB_ZCL_FRAME_DIRECTION_TO_SRV &&
         cmd_params->is_common_command &&
         cmd_params->cluster_id == ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT &&
@@ -73,6 +76,7 @@ zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bu
         // m_interface->m_period = config_rep_req->u.clnt.min_interval * 1000;
 
         // TODO: Solve bug on malformed report configuration response
+        reader.getPayloadHEX(bufid);
 
         m_interface->m_period = 30000;
     }
