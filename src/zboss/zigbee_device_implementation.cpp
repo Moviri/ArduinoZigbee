@@ -66,7 +66,7 @@ static zb_ret_t zigbee_start()
     zb_ret_t zb_err_code = zboss_start_no_autostart();
     ZB_ERROR_CHECK(zb_err_code);
 
-    return 1;
+    return zb_err_code;
 }
 
 static zb_void_t processZclDeviceCommand(zb_bufid_t bufid)
