@@ -2,7 +2,6 @@
 #include "zigbee_temperature_sensor_implementation.h"
 #include "../../endpoints/zigbee_temperature_sensor.h"
 #include <vector>
-#include "../util/zcl_payload_reader.h"
 
 ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
 {
@@ -63,22 +62,19 @@ ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(Zig
 
 zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params)
 {
-    ZbossZCLPayloadReader &reader = ZbossZCLPayloadReader::getInstance();
-
     if (cmd_params->cmd_direction == ZB_ZCL_FRAME_DIRECTION_TO_SRV &&
         cmd_params->is_common_command &&
         cmd_params->cluster_id == ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT &&
         cmd_params->cmd_id == ZB_ZCL_CMD_CONFIG_REPORT)
     {
-        // zb_zcl_configure_reporting_req_t *config_rep_req;
-        // ZB_ZCL_GENERAL_GET_NEXT_CONFIGURE_REPORTING_REQ(bufid, config_rep_req);
+        size_t payload_length = zb_buf_len(bufid);
+        const zb_uint8_t *p_payload = (const zb_uint8_t*)zb_buf_begin(bufid);
 
-        // m_interface->m_period = config_rep_req->u.clnt.min_interval * 1000;
+        zb_uint16_t lsb_min_interval = *(p_payload+(4*sizeof(zb_uint8_t)));
+        zb_uint16_t msb_min_interval = *(p_payload+(5*sizeof(zb_uint8_t)));
+        zb_uint16_t min_interval = (msb_min_interval << 8 ) | (lsb_min_interval);
 
-        // TODO: Solve bug on malformed report configuration response
-        reader.getPayloadHEX(bufid);
-
-        m_interface->m_period = 30000;
+        m_interface->m_period = min_interval * 1000;
     }
     else if (cmd_params->cmd_direction == ZB_ZCL_FRAME_DIRECTION_TO_SRV &&
              cmd_params->is_common_command &&
@@ -87,7 +83,6 @@ zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bu
     {
         update();
     }
-
     return ZB_FALSE;
 }
 
