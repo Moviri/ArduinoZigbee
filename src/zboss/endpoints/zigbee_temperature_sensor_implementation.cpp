@@ -3,6 +3,8 @@
 #include "../../endpoints/zigbee_temperature_sensor.h"
 #include <vector>
 
+const zb_uint8_t MIN_INTERVAL_BIT_SHIFT = 4*sizeof(zb_uint8_t);
+
 ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
 {
     /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
@@ -64,25 +66,30 @@ zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bu
 {
     if (cmd_params->cmd_direction == ZB_ZCL_FRAME_DIRECTION_TO_SRV &&
         cmd_params->is_common_command &&
-        cmd_params->cluster_id == ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT &&
-        cmd_params->cmd_id == ZB_ZCL_CMD_CONFIG_REPORT)
+        cmd_params->cluster_id == ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT)
     {
-        size_t payload_length = zb_buf_len(bufid);
-        const zb_uint8_t *p_payload = (const zb_uint8_t*)zb_buf_begin(bufid);
+        switch (cmd_params->cmd_id)
+        {
+        case ZB_ZCL_CMD_CONFIG_REPORT:
+        {
+            const zb_uint8_t *p_payload = (const zb_uint8_t *)zb_buf_begin(bufid);
 
-        zb_uint16_t lsb_min_interval = *(p_payload+(4*sizeof(zb_uint8_t)));
-        zb_uint16_t msb_min_interval = *(p_payload+(5*sizeof(zb_uint8_t)));
-        zb_uint16_t min_interval = (msb_min_interval << 8 ) | (lsb_min_interval);
+            zb_uint16_t min_interval = *(const zb_uint16_t*)(p_payload+MIN_INTERVAL_BIT_SHIFT);
 
-        m_interface->m_period = min_interval * 1000;
+            m_interface->m_period = min_interval * 1000;
+            Serial.println(m_interface->m_period);
+            break;
+        }
+        case ZB_ZCL_CMD_READ_ATTRIB:
+        {
+            update();
+            break;
+        }
+        default:
+            break;
+        }
     }
-    else if (cmd_params->cmd_direction == ZB_ZCL_FRAME_DIRECTION_TO_SRV &&
-             cmd_params->is_common_command &&
-             cmd_params->cluster_id == ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT &&
-             cmd_params->cmd_id == ZB_ZCL_CMD_READ_ATTRIB)
-    {
-        update();
-    }
+
     return ZB_FALSE;
 }
 
