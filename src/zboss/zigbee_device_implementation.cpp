@@ -30,7 +30,28 @@ extern "C"
 
 void zboss_signal_handler(zb_bufid_t bufid)
 {
-    /* No application-specific behavior is required. Call default signal handler. */
+    zb_zdo_app_signal_hdr_t *p_sg_p = NULL;
+    zb_zdo_app_signal_type_t sig = zb_get_app_signal(bufid, &p_sg_p);
+
+    switch (sig)
+    {
+    case ZB_ZDO_SIGNAL_LEAVE:
+        /* Reset reporting times to avoid useless measurements */
+        ZigbeeDevice &device = ZigbeeDevice::getInstance();
+        ZigbeeEndpoint *ep;
+        zb_uint8_t id = 1;
+
+        ep = device.getEndpointByID(id++);
+        while (ep != nullptr)
+        {
+            ep->implementation()->onLeave();
+            ep = device.getEndpointByID(id++);
+        }
+
+        break;
+    }
+
+    /* Call default signal handler. */
     ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
 
     if (bufid)

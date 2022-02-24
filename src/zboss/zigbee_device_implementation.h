@@ -60,8 +60,6 @@ public:
 
     ZigbeeEndpoint *getEndpointByID(uint8_t id) const;
 
-    
-
 private:
     void updateEndpoints();
     void initDeviceContext();

@@ -25,6 +25,8 @@ public:
     virtual void feedbackEffect(zb_zcl_identify_effect_value_param_t *idt_params);
     /** Called to restore settings from memory */
     virtual void reloadSettingsFromMemory();
+
+    virtual void onLeave();
     /** Set the model id attribute **/
     void setModelID(char model_id[]);
 
