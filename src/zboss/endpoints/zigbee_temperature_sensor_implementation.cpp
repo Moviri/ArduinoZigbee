@@ -111,3 +111,8 @@ void ZigbeeTemperatureSensorImplementation::restoreReportingPeriod()
 {
     m_interface->m_period = m_zboss_data.reporting_infotemperature_sensor[0].u.send_info.min_interval * 1000;
 }
+
+void ZigbeeTemperatureSensorImplementation::onLeave()
+{
+    m_interface->m_period = UINT32_MAX;
+}

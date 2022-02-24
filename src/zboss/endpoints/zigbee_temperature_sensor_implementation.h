@@ -22,6 +22,8 @@ public:
     zb_uint8_t processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params) override;
     void update() override;
     void restoreReportingPeriod() override;
+    void onLeave() override;
+
 
 private:
     typedef struct zb_af_simple_desc_temperature_sensor

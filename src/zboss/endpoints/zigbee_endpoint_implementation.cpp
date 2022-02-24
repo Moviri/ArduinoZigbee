@@ -158,6 +158,10 @@ void ZigbeeEndpointImplementation::restoreReportingPeriod()
 {
 }
 
+void ZigbeeEndpointImplementation::onLeave()
+{
+}
+
 void ZigbeeEndpointImplementation::setModelID(char model_id[])
 {
     /* Basic cluster attributes data

@@ -44,7 +44,7 @@ void zboss_signal_handler(zb_bufid_t bufid)
         ep = device.getEndpointByID(id++);
         while (ep != nullptr)
         {
-            ep->m_period = UINT32_MAX;
+            ep->implementation()->onLeave();
             ep = device.getEndpointByID(id++);
         }
 
