@@ -193,7 +193,7 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     {
         for (ZigbeeEndpoint *endpoint : m_endpoints)
         {
-            endpoint->implementation()->restoreReportingPeriod();
+            endpoint->implementation()->reloadSettingsFromMemory();
         }
     }
 

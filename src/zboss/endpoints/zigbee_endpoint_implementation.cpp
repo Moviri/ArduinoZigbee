@@ -154,7 +154,7 @@ void ZigbeeEndpointImplementation::feedbackEffect(zb_zcl_identify_effect_value_p
     }
 }
 
-void ZigbeeEndpointImplementation::restoreReportingPeriod()
+void ZigbeeEndpointImplementation::reloadSettingsFromMemory()
 {
 }
 
