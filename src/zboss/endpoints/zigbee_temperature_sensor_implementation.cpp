@@ -80,7 +80,6 @@ zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bu
             zb_uint16_t max_interval = *(const zb_uint16_t *)(p_payload + MAX_INTERVAL_BIT_SHIFT);
 
             m_interface->m_period = checkUpdatePeriod(min_interval, max_interval, DEFAULT_TEMPERATURE_MEASUREMENT_PERIOD);
-            Serial.println(m_interface->m_period);
             break;
         }
         case ZB_ZCL_CMD_READ_ATTRIB:
