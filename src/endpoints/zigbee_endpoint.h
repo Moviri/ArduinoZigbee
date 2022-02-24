@@ -29,11 +29,13 @@ public:
     /* Delete the assignment operator. */
     void operator=(ZigbeeEndpoint const &) = delete;
 
+    /** Milliseconds between two perodic events */
+    uint32_t m_period;
+
 protected:
     const uint8_t m_endpoint_id;
 
-    /** Milliseconds between two perodic events */
-    uint32_t m_period;
+    
     /** Last time step at which periodic_CB() has been triggered */
     uint32_t m_last_update_time;
     /* Pointer to implementation (PIMPL) opaque pointer. */
