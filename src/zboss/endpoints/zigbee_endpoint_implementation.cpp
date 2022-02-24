@@ -92,6 +92,23 @@ bool ZigbeeEndpointImplementation::setDescriptor(zb_af_endpoint_desc_t *descript
     return 1;
 }
 
+uint32_t ZigbeeEndpointImplementation::checkUpdatePeriod(zb_uint16_t min_interval, zb_uint16_t max_interval, uint32_t default_period)
+{
+    if (max_interval == 0xffff)
+    {
+        return UINT32_MAX;
+    }
+    else
+    {
+        if ((max_interval == 0 && min_interval == 0xffff) || min_interval == 0)
+        {
+            return default_period;
+        }
+    }
+
+    return min_interval*1000;
+}
+
 zb_af_endpoint_desc_t *ZigbeeEndpointImplementation::endpointDescriptor() const
 {
     return m_endpoint_descriptor;
@@ -139,7 +156,6 @@ void ZigbeeEndpointImplementation::feedbackEffect(zb_zcl_identify_effect_value_p
 
 void ZigbeeEndpointImplementation::restoreReportingPeriod()
 {
-    
 }
 
 void ZigbeeEndpointImplementation::setModelID(char model_id[])

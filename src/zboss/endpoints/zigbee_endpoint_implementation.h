@@ -39,6 +39,8 @@ public:
 
 protected:
     bool setDescriptor(zb_af_endpoint_desc_t *descriptor);
+    /* Check update time for edge cases */
+    uint32_t checkUpdatePeriod(zb_uint16_t min_interval, zb_uint16_t max_interval, uint32_t default_period);
 
     typedef struct
     {
