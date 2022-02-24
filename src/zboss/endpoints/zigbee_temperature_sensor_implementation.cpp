@@ -76,7 +76,7 @@ zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bu
         {
             const zb_uint8_t *p_payload = (const zb_uint8_t *)zb_buf_begin(bufid);
 
-            /* The architecture is LE so we can directly read the buffer */ 
+            /* The architecture is LE so we can directly read the buffer */
             zb_uint16_t min_interval = *(const zb_uint16_t *)(p_payload + MIN_INTERVAL_BIT_SHIFT);
             zb_uint16_t max_interval = *(const zb_uint16_t *)(p_payload + MAX_INTERVAL_BIT_SHIFT);
 
@@ -110,7 +110,11 @@ void ZigbeeTemperatureSensorImplementation::update()
 
 void ZigbeeTemperatureSensorImplementation::reloadSettingsFromMemory()
 {
-    m_interface->m_period = m_zboss_data.reporting_infotemperature_sensor[0].u.send_info.min_interval * 1000;
+    // Read reporting period from Zboss dedicated memory that in this case is m_zboss_data.reporting_infotemperature_sensor[0]
+    m_interface->m_period = zb_zcl_find_reporting_info(m_endpoint_id, 
+                                                       ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, 
+                                                       ZB_ZCL_CLUSTER_SERVER_ROLE, 
+                                                       ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID)->u.send_info.min_interval * 1000;
 }
 
 void ZigbeeTemperatureSensorImplementation::onLeave()
