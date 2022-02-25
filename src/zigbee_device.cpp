@@ -27,6 +27,11 @@
  */
 ZigbeeDevice &ZIGBEE = ZigbeeDevice::getInstance();
 
+ZigbeeDeviceImplementation *ZigbeeDevice::implementation() const
+{
+    return m_impl.get();
+}
+
 ZigbeeEndpoint *ZigbeeDevice::getEndpointByID(unsigned char id) const
 {
     return m_impl->getEndpointByID(id);
@@ -55,7 +60,7 @@ void ZigbeeDevice::setTrustCenterKey(unsigned char *key)
 
 int ZigbeeDevice::begin(const unsigned int channel)
 {
-    return m_impl->begin(std::vector<unsigned int> {channel});
+    return m_impl->begin(std::vector<unsigned int>{channel});
 }
 
 int ZigbeeDevice::begin(const std::vector<unsigned int> channels)
@@ -83,6 +88,7 @@ void ZigbeeDevice::setDeviceName(char model_id[])
     m_impl->setDeviceName(model_id);
 }
 
-void ZigbeeDevice::eraseMemory() {
+void ZigbeeDevice::eraseMemory()
+{
     m_impl->eraseMemory();
 }

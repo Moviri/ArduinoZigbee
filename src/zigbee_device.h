@@ -99,6 +99,8 @@ public:
 
     ZigbeeEndpoint *getEndpointByID(unsigned char id) const;
 
+    ZigbeeDeviceImplementation *implementation() const;
+
     /* Delete the copy constructor. */
     ZigbeeDevice(ZigbeeDevice const &) = delete;
     /* Delete the assignment operator. */
