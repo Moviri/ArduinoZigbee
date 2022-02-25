@@ -34,7 +34,6 @@ public:
 
 protected:
     const uint8_t m_endpoint_id;
-
     
     /** Last time step at which periodic_CB() has been triggered */
     uint32_t m_last_update_time;
