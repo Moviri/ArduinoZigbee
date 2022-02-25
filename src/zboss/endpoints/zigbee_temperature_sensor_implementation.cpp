@@ -111,13 +111,16 @@ void ZigbeeTemperatureSensorImplementation::update()
 void ZigbeeTemperatureSensorImplementation::reloadSettingsFromMemory()
 {
     // Read reporting period from Zboss dedicated memory that in this case is m_zboss_data.reporting_infotemperature_sensor[0]
-    m_interface->m_period = zb_zcl_find_reporting_info(m_endpoint_id, 
-                                                       ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, 
-                                                       ZB_ZCL_CLUSTER_SERVER_ROLE, 
-                                                       ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID)->u.send_info.min_interval * 1000;
+    m_interface->m_period = zb_zcl_find_reporting_info(m_endpoint_id,
+                                                       ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT,
+                                                       ZB_ZCL_CLUSTER_SERVER_ROLE,
+                                                       ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID)
+                                ->u.send_info.min_interval *
+                            1000;
 }
 
 void ZigbeeTemperatureSensorImplementation::onLeave()
 {
+    /* Reset reporting times to avoid useless measurements */
     m_interface->m_period = UINT32_MAX;
 }
