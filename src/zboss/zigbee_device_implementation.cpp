@@ -28,31 +28,29 @@ extern "C"
     zb_void_t zigbee_erase_persistent_storage(zb_bool_t erase);
 }
 
+/**
+ * @brief Mandatory function for all applications implemented on the top of ZBOSS stack.
+ * This function should be defined with this specific name, because its is called by the ZBOSS stack where it is declared as extern.
+ *
+ * @param bufid
+ */
 void zboss_signal_handler(zb_bufid_t bufid)
 {
-    zb_zdo_app_signal_hdr_t *p_sg_p = NULL;
-    zb_zdo_app_signal_type_t sig = zb_get_app_signal(bufid, &p_sg_p);
-
-    switch (sig)
-    {
-    case ZB_ZDO_SIGNAL_LEAVE:
-        /* Reset reporting times to avoid useless measurements */
-        ZigbeeDevice &device = ZigbeeDevice::getInstance();
-        ZigbeeEndpoint *ep;
-        zb_uint8_t id = 1;
-
-        ep = device.getEndpointByID(id++);
-        while (ep != nullptr)
-        {
-            ep->implementation()->onLeave();
-            ep = device.getEndpointByID(id++);
-        }
-
-        break;
-    }
+    zb_zdo_app_signal_hdr_t *p_sg_p = nullptr;
+    zb_zdo_app_signal_type_t signal = zb_get_app_signal(bufid, &p_sg_p);
 
     /* Call default signal handler. */
     ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
+
+    /* Inform our classes about some specific signals. */
+    switch (signal)
+    {
+    case ZB_ZDO_SIGNAL_LEAVE:
+        ZigbeeDevice::getInstance().implementation()->onLeave();
+        break;
+    default:
+        break;
+    }
 
     if (bufid)
     {
@@ -120,6 +118,14 @@ static zb_uint8_t processCommandCallback(zb_bufid_t bufid)
         }
     }
     return ZB_FALSE;
+}
+
+void ZigbeeDeviceImplementation::onLeave()
+{
+    for (const ZigbeeEndpoint *endpoint : m_endpoints)
+    {
+        endpoint->implementation()->onLeave();
+    }
 }
 
 ZigbeeEndpoint *ZigbeeDeviceImplementation::getEndpointByID(uint8_t id) const

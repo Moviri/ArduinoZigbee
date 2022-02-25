@@ -58,6 +58,11 @@ public:
      */
     void eraseMemory();
 
+    /**
+     * @brief Handle the command that is received when the device has to leave the network.
+     */
+    void onLeave();
+
     ZigbeeEndpoint *getEndpointByID(uint8_t id) const;
 
 private:
