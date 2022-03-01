@@ -74,7 +74,8 @@ private:
     unsigned char *m_trust_center_key;
     zb_af_device_ctx_t m_context;
     std::vector<ZigbeeEndpoint *> m_endpoints;
-    zb_bool_t m_erase_persistent_mem = ZB_FALSE;
+    /** Flag set to true if the memory used by Zboss stack should be erased before starting the stack. */
+    zb_bool_t m_erase_persistent_mem;
 };
 
 #endif
