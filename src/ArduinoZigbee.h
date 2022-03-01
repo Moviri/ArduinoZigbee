@@ -23,5 +23,11 @@
 #include "zigbee_device.h"
 #include "endpoints/zigbee_dimmable_light.h"
 #include "endpoints/zigbee_temperature_sensor.h"
+#include "utils/compile_time.h"
+
+namespace zigbee_utils
+{
+  const unsigned int kBuildTimestamp = UNIX_TIMESTAMP;
+}
 
 #endif
