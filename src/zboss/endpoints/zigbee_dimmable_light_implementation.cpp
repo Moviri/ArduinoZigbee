@@ -127,7 +127,7 @@ zb_ret_t ZigbeeDimmableLightImplementation::processCommandDV(zb_zcl_device_callb
         }
     case ZB_ZCL_IDENTIFY_EFFECT_CB_ID:
     {
-        feedbackEffect(&cmd_params->cb_param.identify_effect_value_param);
+        onIdentify(&cmd_params->cb_param.identify_effect_value_param);
         return RET_OK;
     }
     default:

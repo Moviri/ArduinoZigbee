@@ -22,10 +22,12 @@ public:
     virtual zb_uint8_t processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params);
     /** Callback for ep specific events */
     virtual zb_ret_t processCommandDV(zb_zcl_device_callback_param_t *cmd_params);
-    /** Identify effect handler **/
-    virtual void feedbackEffect(zb_zcl_identify_effect_value_param_t *idt_params);
+
     /** Called to restore settings from memory */
     virtual void reloadSettingsFromMemory();
+
+    /** Identify effect handler **/
+    virtual void onIdentify(zb_zcl_identify_effect_value_param_t *idt_params);
 
     virtual void onLeave();
     /** Set the model id attribute **/

@@ -127,7 +127,7 @@ zb_ret_t ZigbeeEndpointImplementation::processCommandDV(zb_zcl_device_callback_p
     return RET_ERROR;
 }
 
-void ZigbeeEndpointImplementation::feedbackEffect(zb_zcl_identify_effect_value_param_t *idt_params)
+void ZigbeeEndpointImplementation::onIdentify(zb_zcl_identify_effect_value_param_t *idt_params)
 {
     /** Default behaviour. Can be overridden by child classes **/
     const uint32_t start_time = millis();
