@@ -39,14 +39,30 @@ void zboss_signal_handler(zb_bufid_t bufid)
     zb_zdo_app_signal_hdr_t *p_sg_p = nullptr;
     zb_zdo_app_signal_type_t signal = zb_get_app_signal(bufid, &p_sg_p);
 
-    /* Call default signal handler. */
+    /* Call default mbed-OS signal handler. It internally calls bdb_start_top_level_commissioning() when ZB_ZDO_SIGNAL_SKIP_STARTUP is detected.  */
     ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));
 
     /* Inform our classes about some specific signals. */
     switch (signal)
     {
+    case ZB_ZDO_SIGNAL_DEVICE_ANNCE:
+        /* The device_annce is provided to enable ZigBee devices on the network to notify other ZigBee devices that the device has joined or re-joined the network. */
+        break;
     case ZB_ZDO_SIGNAL_LEAVE:
+        /* The device itself has left the network. */
         ZigbeeDevice::getInstance().implementation()->onLeave();
+        break;
+    case ZB_ZDO_SIGNAL_ERROR:
+        /* Some mess in the buffer. */
+        break;
+    case ZB_BDB_SIGNAL_DEVICE_FIRST_START:
+        /* Device started and commissioned first time after NVRAM erase. The signal has Code + Status only. */
+        break;
+    case ZB_BDB_SIGNAL_DEVICE_REBOOT:
+        /* BDB initialization completed after device reboot, use NVRAM contents during initialization. Device joined/rejoined and started. The signal has Code + Status only. */
+        break;
+    case ZB_ZDO_SIGNAL_PRODUCTION_CONFIG_READY:
+        /* Notifies application that application specific part of production configuration can be applied. */
         break;
     default:
         break;
@@ -174,7 +190,7 @@ int ZigbeeDeviceImplementation::initDevice()
     return 1;
 }
 
-ZigbeeDeviceImplementation::ZigbeeDeviceImplementation() : m_trust_center_key(nullptr), m_context({0})
+ZigbeeDeviceImplementation::ZigbeeDeviceImplementation() : m_trust_center_key(nullptr), m_context({0}), m_erase_persistent_mem(ZB_FALSE)
 {
 }
 
