@@ -24,7 +24,6 @@ public:
     void reloadSettingsFromMemory() override;
     void onLeave() override;
 
-
 private:
     typedef struct zb_af_simple_desc_temperature_sensor
     {
@@ -52,8 +51,6 @@ private:
     } ZbossSpecificData;
 
     ZbossSpecificData m_zboss_data;
-    /** Backpointer to the visible object. */
-    ZigbeeTemperatureSensor *const m_interface;
 };
 
 #endif // ZIGBEE_TEMP_SENSOR_IMPLEMENTATION_H_

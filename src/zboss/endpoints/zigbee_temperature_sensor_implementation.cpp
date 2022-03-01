@@ -1,13 +1,14 @@
 #include <mbed.h>
 #include "zigbee_temperature_sensor_implementation.h"
 #include "../../endpoints/zigbee_temperature_sensor.h"
-#include <vector>
+
+#define interface() static_cast<ZigbeeTemperatureSensor *>(m_interface)
 
 const zb_uint8_t MIN_INTERVAL_BIT_SHIFT = 4 * sizeof(zb_uint8_t);
 const zb_uint8_t MAX_INTERVAL_BIT_SHIFT = 6 * sizeof(zb_uint8_t);
 const zb_uint32_t DEFAULT_TEMPERATURE_MEASUREMENT_PERIOD = 30000;
 
-ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type), m_interface(interface)
+ZigbeeTemperatureSensorImplementation::ZigbeeTemperatureSensorImplementation(ZigbeeTemperatureSensor *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(interface, model_id, power_source_type)
 {
     /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
     memset(&m_zboss_data, 0, sizeof(m_zboss_data));
@@ -98,7 +99,7 @@ zb_uint8_t ZigbeeTemperatureSensorImplementation::processCommandEP(zb_bufid_t bu
 
 void ZigbeeTemperatureSensorImplementation::update()
 {
-    int16_t curr_temp_cast = (int16_t)(m_interface->m_read_temperature() * 100.0);
+    int16_t curr_temp_cast = (int16_t)(interface()->m_read_temperature() * 100.0);
 
     zb_zcl_status_t zcl_status = zb_zcl_set_attr_val(m_endpoint_id,
                                                      ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT,

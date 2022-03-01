@@ -9,10 +9,11 @@ extern "C"
 #include "zb_error_handler.h"
 }
 
+class ZigbeeEndpoint;
 class ZigbeeEndpointImplementation
 {
 protected:
-    ZigbeeEndpointImplementation(const char model_id[], unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
+    ZigbeeEndpointImplementation(ZigbeeEndpoint *interface, const char model_id[], unsigned int power_source_type = ZB_ZCL_BASIC_POWER_SOURCE_UNKNOWN);
 
 public:
     /** Periodic endpoint update. */
@@ -64,6 +65,8 @@ protected:
     zb_af_endpoint_desc_t *m_endpoint_descriptor;
 
     ZbossData m_zboss_basic_data;
+    /** Backpointer to the visible object. */
+    ZigbeeEndpoint *const m_interface;
 
 private:
     /** [1, 240] Endpoint ID counter for automatic endpoint ID generation */

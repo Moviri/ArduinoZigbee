@@ -75,8 +75,6 @@ private:
     } ZbossSpecificData;
 
     ZbossSpecificData m_zboss_data;
-    /** Backpointer to the visible object. */
-    ZigbeeDimmableLight *const m_interface;
 };
 
 #endif // ZIGBEE_DIM_LIGHT_IMPLEMENTATION_H_

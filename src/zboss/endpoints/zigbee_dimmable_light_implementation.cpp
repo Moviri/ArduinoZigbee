@@ -1,10 +1,10 @@
 #include <mbed.h>
 #include "zigbee_dimmable_light_implementation.h"
 #include "../../endpoints/zigbee_dimmable_light.h"
-#include <vector>
 
-ZigbeeDimmableLightImplementation::ZigbeeDimmableLightImplementation(ZigbeeDimmableLight *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(model_id, power_source_type),
-                                                                                                                                                                   m_interface(interface)
+#define interface() static_cast<ZigbeeDimmableLight *>(m_interface)
+
+ZigbeeDimmableLightImplementation::ZigbeeDimmableLightImplementation(ZigbeeDimmableLight *interface, const zb_char_t model_id[], unsigned int power_source_type) : ZigbeeEndpointImplementation(interface, model_id, power_source_type)
 {
     /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
     memset(&m_zboss_data, 0, sizeof(m_zboss_data));
@@ -181,7 +181,7 @@ void ZigbeeDimmableLightImplementation::setBrightness(zb_uint8_t value)
                          &value_onoff,
                          ZB_FALSE);
 
-    m_interface->m_write_brightness(value);
+    interface()->m_write_brightness(value);
 }
 
 void ZigbeeDimmableLightImplementation::setState(zb_bool_t value)
@@ -199,6 +199,6 @@ void ZigbeeDimmableLightImplementation::setState(zb_bool_t value)
     }
     else
     {
-        m_interface->m_write_brightness(0);
+        interface()->m_write_brightness(0);
     }
 }

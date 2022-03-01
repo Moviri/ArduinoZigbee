@@ -1,13 +1,16 @@
+#include <mbed.h>
 #include <Scheduler.h>
 #include "zigbee_endpoint_implementation.h"
+#include "../../endpoints/zigbee_endpoint.h"
 
 static const char kZigbeeManufacturerName[] = "Arduino";
 static const char kZigbeeDate[] = "20210911";
 
 uint8_t ZigbeeEndpointImplementation::m_ep_id_counter = 0;
 
-ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(const char model_id[], unsigned int power_source_type) : m_endpoint_id(++m_ep_id_counter)
+ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(ZigbeeEndpoint *interface, const char model_id[], unsigned int power_source_type) : m_interface(interface), m_endpoint_id(++m_ep_id_counter)
 {
+    /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
     memset(&m_zboss_basic_data, 0, sizeof(m_zboss_basic_data));
     /* Basic cluster attributes data */
     m_zboss_basic_data.basic_attr.zcl_version = ZB_ZCL_VERSION;
