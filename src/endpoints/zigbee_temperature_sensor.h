@@ -11,9 +11,9 @@ public:
     /** The ype of the callback to read the value from the Arduino sketch. */
     typedef float (*ReadTemperatureCallback)();
 
-    ZigbeeTemperatureSensor(ReadTemperatureCallback callback,
-                            const char model_id[] = "Temperature Sensor v1",
-                            unsigned int power_source_type = 0);
+    ZigbeeTemperatureSensor(ReadTemperatureCallback callback);
+    ZigbeeTemperatureSensor(const char model_id[], ReadTemperatureCallback callback);
+    ZigbeeTemperatureSensor(const char model_id[], ZigbeeEndpoint::SourceType power_source_type, ReadTemperatureCallback temperature_callback, ZigbeeEndpoint::IdentifyCallback identify_callback);
     ~ZigbeeTemperatureSensor();
 
     void update() override;

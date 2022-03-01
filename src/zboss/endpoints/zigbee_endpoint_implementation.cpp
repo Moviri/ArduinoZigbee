@@ -1,5 +1,4 @@
 #include <mbed.h>
-#include <Scheduler.h>
 #include "zigbee_endpoint_implementation.h"
 #include "../../endpoints/zigbee_endpoint.h"
 
@@ -109,7 +108,7 @@ uint32_t ZigbeeEndpointImplementation::checkUpdatePeriod(zb_uint16_t min_interva
         }
     }
 
-    return min_interval*1000;
+    return min_interval * 1000;
 }
 
 zb_af_endpoint_desc_t *ZigbeeEndpointImplementation::endpointDescriptor() const
@@ -127,38 +126,16 @@ zb_ret_t ZigbeeEndpointImplementation::processCommandDV(zb_zcl_device_callback_p
     return RET_ERROR;
 }
 
-void ZigbeeEndpointImplementation::onIdentify(zb_zcl_identify_effect_value_param_t *idt_params)
-{
-    /** Default behaviour. Can be overridden by child classes **/
-    const uint32_t start_time = millis();
-    switch (idt_params->effect_id)
-    {
-    case ZB_ZCL_IDENTIFY_EFFECT_ID_BLINK:
-        /* Blink one time */
-        analogWrite(LED_BUILTIN, 255);
-        while (millis() - start_time < 2000)
-        {
-            yield();
-        }
-        analogWrite(LED_BUILTIN, 0);
-        break;
-
-    case ZB_ZCL_IDENTIFY_EFFECT_ID_OKAY:
-        analogWrite(LEDG, 0);
-        while (millis() - start_time < 1000)
-        {
-            yield();
-        }
-        analogWrite(LEDG, 255);
-        break;
-
-    default:
-        break;
-    }
-}
-
 void ZigbeeEndpointImplementation::reloadSettingsFromMemory()
 {
+}
+
+void ZigbeeEndpointImplementation::onIdentify(zb_zcl_identify_effect_value_param_t *idt_params)
+{
+    if (m_interface->m_identify_callback)
+    {
+        m_interface->m_identify_callback(static_cast<ZigbeeEndpoint::IdentifyEffect>(idt_params->effect_id));
+    }
 }
 
 void ZigbeeEndpointImplementation::onLeave()

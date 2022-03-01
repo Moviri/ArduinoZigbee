@@ -13,6 +13,7 @@
 
 #include <Arduino_HTS221.h>
 #include <ArduinoZigbee.h>
+#include <Scheduler.h>
 
 void dimLightCB_1(const uint8_t brightness_level) {
     analogWrite(LEDR, 255 - brightness_level);
@@ -23,7 +24,38 @@ float tempSensorCB_1() {
     return HTS.readTemperature();
 }
 
-ZigbeeDimmableLight light(dimLightCB_1);
+void dimLightIdentifyCB(ZigbeeEndpoint::IdentifyEffect effect)
+{
+    /** Default behaviour. Can be overridden by child classes **/
+    const uint32_t start_time = millis();
+    switch (effect)
+    {
+    case ZigbeeEndpoint::IdentifyEffect::kBlink:
+        /* Blink one time */
+        analogWrite(LED_BUILTIN, 255);
+        while (millis() - start_time < 2000)
+        {
+            yield();
+        }
+        analogWrite(LED_BUILTIN, 0);
+        break;
+
+    case ZigbeeEndpoint::IdentifyEffect::kOkay:
+        analogWrite(LEDG, 0);
+        while (millis() - start_time < 1000)
+        {
+            yield();
+        }
+        analogWrite(LEDG, 255);
+        break;
+
+    default:
+        break;
+    }
+}
+
+
+ZigbeeDimmableLight light("Dimmable Light v1", ZigbeeEndpoint::SourceType::kDcSource, dimLightCB_1, dimLightIdentifyCB);
 ZigbeeTemperatureSensor temperature_sensor(tempSensorCB_1);
 
 void setup() {

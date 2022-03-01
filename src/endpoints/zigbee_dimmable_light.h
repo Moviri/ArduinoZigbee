@@ -11,9 +11,12 @@ public:
     /** The type of the callback to write the value to the Arduino sketch. */
     typedef void (*WriteBrightnessCallback)(const uint8_t brightness_level);
 
-    ZigbeeDimmableLight(WriteBrightnessCallback callback,
-                        const char model_id[] = "Dimmable Light v1",
-                        unsigned int power_source_type = 0);
+    ZigbeeDimmableLight(WriteBrightnessCallback callback);
+    ZigbeeDimmableLight(const char model_id[], WriteBrightnessCallback brightness_callback);
+    ZigbeeDimmableLight(const char model_id[],
+                        ZigbeeEndpoint::SourceType power_source_type,
+                        WriteBrightnessCallback brightness_callback,
+                        ZigbeeEndpoint::IdentifyCallback identify_callback);
     ~ZigbeeDimmableLight();
 
     /**

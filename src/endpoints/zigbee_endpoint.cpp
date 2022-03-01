@@ -1,10 +1,11 @@
 #include "zigbee_endpoint.h"
 #include "../zboss/endpoints/zigbee_endpoint_implementation.h"
 
-ZigbeeEndpoint::ZigbeeEndpoint(ZigbeeEndpointImplementation *impl) : m_endpoint_id(impl->endpointId()),
-                                                                     m_period(UINT32_MAX),
-                                                                     m_last_update_time(0),
-                                                                     m_impl(impl)
+ZigbeeEndpoint::ZigbeeEndpoint(ZigbeeEndpointImplementation *impl, IdentifyCallback identify_callback) : m_endpoint_id(impl->endpointId()),
+                                                                                                         m_period(UINT32_MAX),
+                                                                                                         m_last_update_time(0),
+                                                                                                         m_identify_callback(identify_callback),
+                                                                                                         m_impl(impl)
 {
 }
 
