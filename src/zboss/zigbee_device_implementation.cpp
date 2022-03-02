@@ -2,7 +2,6 @@
 #include "zigbee_device_implementation.h"
 #include "pal_bb.h"
 
-#include "ArduinoZigbee.h"
 extern "C"
 {
 #include "zboss_api.h"
@@ -17,6 +16,10 @@ extern "C"
 #if !defined ZB_ROUTER_ROLE
 #error Define ZB_ROUTER_ROLE to compile Router source code.
 #endif
+
+namespace zigbee_utils {
+    extern const  unsigned int kBuildTimestamp;
+}
 
 /** The maximum amount of connected devices. Setting this value to 0 disables association to this device.  */
 #define MAX_CHILDREN 10
