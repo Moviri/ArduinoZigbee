@@ -17,8 +17,9 @@ extern "C"
 #error Define ZB_ROUTER_ROLE to compile Router source code.
 #endif
 
-namespace zigbee_utils {
-    extern const  unsigned int kBuildTimestamp;
+namespace zigbee_utils
+{
+    extern const unsigned int kBuildTimestamp;
 }
 
 /** The maximum amount of connected devices. Setting this value to 0 disables association to this device.  */
@@ -213,7 +214,7 @@ void ZigbeeDeviceImplementation::setTrustCenterKey(unsigned char *key)
 
 static void wait_for_ready()
 {
-    while (NRF_NVMC->READY == NVMC_READY_READY_Busy)
+    while (NRF_NVMC->READY != NVMC_READY_READY_Ready)
     {
     };
 }
@@ -229,18 +230,23 @@ static bool isSketchChanged()
     bool changed = false;
     if (NRF_UICR->CUSTOMER[0] != zigbee_utils::kBuildTimestamp)
     {
+        if (NRF_UICR->CUSTOMER[0] != 0xFFFFFFFF)
+        {
+            /* Erase the memory block. */
+            wait_for_ready();
+            NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Een << NVMC_CONFIG_WEN_Pos;
+            wait_for_ready();
+            NRF_NVMC->ERASEUICR = NVMC_ERASEUICR_ERASEUICR_Erase;
+        }
+        /* Write the updated timestamp. */
         wait_for_ready();
         NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Wen << NVMC_CONFIG_WEN_Pos;
         wait_for_ready();
-        /* Clear the memory block. */
-        NRF_UICR->CUSTOMER[0] = 0xFFFFFFFF;
-        wait_for_ready();
-        /* Write the updated timestamp. */
         NRF_UICR->CUSTOMER[0] = zigbee_utils::kBuildTimestamp;
-        changed = true;
-
+        wait_for_ready();
         NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren << NVMC_CONFIG_WEN_Pos;
         wait_for_ready();
+        changed = true;
     }
     return changed;
 }
