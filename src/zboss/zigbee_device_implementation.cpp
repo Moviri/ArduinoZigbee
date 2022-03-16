@@ -2,7 +2,6 @@
 #include "zigbee_device_implementation.h"
 #include "pal_bb.h"
 
-#include "Arduino.h"
 extern "C"
 {
 #include "zboss_api.h"
@@ -13,6 +12,7 @@ extern "C"
 
 #include "../zigbee_device.h"
 #include "endpoints/zigbee_endpoint_implementation.h"
+#include "nvram_utils.h"
 
 #if !defined ZB_ROUTER_ROLE
 #error Define ZB_ROUTER_ROLE to compile Router source code.
@@ -222,7 +222,7 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     PalBbSetProtId(BB_PROT_15P4);
     PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
 
-    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemoryToErase());
+    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemoryToErase() || isSketchChanged());
     if (m_trust_center_key != nullptr)
     {
         zb_zdo_set_tc_standard_distributed_key(m_trust_center_key);
