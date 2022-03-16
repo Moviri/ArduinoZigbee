@@ -7,7 +7,7 @@ extern "C"
 }
 
 /** Start address of the application in the flash. Note that corresponds to MBED_ROM_START + "space reserved for Bootloader". */
-const uint32_t kMbedAppStart = 0x08040000UL;
+const uint32_t kMbedAppStart = 0x10000UL;
 /** End address of the application in the flash. */
 const uint32_t kMbedAppEnd = FLASHIAP_APP_ROM_END_ADDR;
 /** Index of the NRF_UICR register used to store the CRC. */
