@@ -23,15 +23,5 @@
 #include "zigbee_device.h"
 #include "endpoints/zigbee_dimmable_light.h"
 #include "endpoints/zigbee_temperature_sensor.h"
-#include "utils/compile_time.h"
-
-namespace zigbee_utils
-{
-    /** This is the build timestamp in seconds since 1st Jan 1970.
-     * This constant is used to detect when the sketch changes, therefore it should be defined in the translation unit of the .ino file.
-     * For this reason this header should be included only once from the .ino file.
-     */
-    extern const unsigned int kBuildTimestamp = UNIX_TIMESTAMP;
-}
 
 #endif
