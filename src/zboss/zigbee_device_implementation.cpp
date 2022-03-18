@@ -280,7 +280,8 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
 
 void ZigbeeDeviceImplementation::end()
 {
-    /* Don't need to do anything special. The user can stop calling poll() at any time. */
+    /* Inform the radio driver that we are not using Zigbee anymore. */
+    PalBbSetProtId(BB_PROT_NONE);
 }
 
 void ZigbeeDeviceImplementation::poll()
