@@ -5,6 +5,10 @@
   It uses the onboard temperature sensor and RGB led of an Arduino Nano 33 BLE Sense to read 
   room temperature and act as a dimmable light.
 
+  WARNING: at the moment to use the HTS you need to modify the HTS.cpp file to ensure that
+  the HTS instance is initialized as "HTS221Class HTS(Wire1);"
+  To do that change the line 159 from "#ifdef ARDUINO_ARDUINO_NANO33BLE" to "#if 1".
+
   The circuit:
   - Arduino Nano 33 BLE Sense
 

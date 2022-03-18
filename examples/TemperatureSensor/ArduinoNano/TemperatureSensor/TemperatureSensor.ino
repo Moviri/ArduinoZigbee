@@ -4,6 +4,10 @@
   This example creates a zigbee device following the HA(Home Automation) profile.
   It uses the onboard temperature sensor of an Arduino Nano 33 BLE Sense to read 
   room temperature
+  
+  WARNING: at the moment to use the HTS you need to modify the HTS.cpp file to ensure that
+  the HTS instance is initialized as "HTS221Class HTS(Wire1);"
+  To do that change the line 159 from "#ifdef ARDUINO_ARDUINO_NANO33BLE" to "#if 1".
 
   The circuit:
   - Arduino Nano 33 BLE Sense
