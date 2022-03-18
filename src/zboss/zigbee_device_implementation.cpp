@@ -165,6 +165,12 @@ void ZigbeeDeviceImplementation::initDeviceContext()
         ep_desc_arr[i++] = endpoint->implementation()->endpointDescriptor();
     }
     m_context.ep_desc_list = ep_desc_arr;
+
+    /* Note that pointers to the descriptors (and the pointers to other Zboss related structures inside the descriptors themeselves)
+     * will be saved in Zboss NVRAM and reused after reboot if the NVRAM is not cleared.
+     * Therefore when the address of the related variables changes the NVRAM should be cleared.
+     */
+    ZB_AF_REGISTER_DEVICE_CTX(&m_context);
 }
 
 int ZigbeeDeviceImplementation::initDevice()
@@ -199,9 +205,8 @@ int ZigbeeDeviceImplementation::initDevice()
     /* Register callback for handling ZCL commands. */
     ZB_ZCL_REGISTER_DEVICE_CB(processZclDeviceCommand);
 
-    /* Register dimmer switch device context (endpoints). */
+    /* Register the contexts of every endpoint. */
     initDeviceContext();
-    ZB_AF_REGISTER_DEVICE_CTX(&m_context);
 
     /* Register endpoints callback. */
     for (const ZigbeeEndpoint *endpoint : m_endpoints)
@@ -247,7 +252,14 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
         }
     }
 
+    /* Set the protocol to be handled by the radio driver.
+     * Notes:
+     * - only one protocol can be used at the same time (see PalBbRegisterProtIrq() implementation in pal_bb.c).
+     * - Zigbee uses 802.15.4 MAC layer.
+     */
     PalBbSetProtId(BB_PROT_15P4);
+
+    /* Register the callback to be called by the driver when the Zigbee protocol is active and an interrupt is received. */
     PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
 
     zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemoryToErase() || isSketchChanged());
