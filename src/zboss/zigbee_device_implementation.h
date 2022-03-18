@@ -20,6 +20,16 @@ public:
     void setTrustCenterKey(unsigned char *key);
 
     /**
+     * @brief Set the Zigbee Revision Level Compatibility
+     * Notes:
+     * - a revision level below 21 will disable the "Trust Center Link Key update procedure" upon joining the network
+     *
+     * @param[in] revision = a Zigbee revision number
+     * @return 0 if it succeeds.
+     */
+    int setZigbeeRevisionLevelCompatibility(unsigned int revision);
+
+    /**
      * @brief Start Zigbee communication.
      *        Example: ZIGBEE.begin({11, 12}); // Enable the communication using channel 11 and 12.
      *
@@ -72,6 +82,8 @@ private:
     zb_bool_t isMemoryToErase();
 
     unsigned char *m_trust_center_key;
+    /** The number of the Zigbee standard revision level the stack should attempt to be compatible with. */
+    int m_revision_level_compatibility;
     zb_af_device_ctx_t m_context;
     std::vector<ZigbeeEndpoint *> m_endpoints;
     /** Flag set to true if the memory used by Zboss stack should be erased before starting the stack. */

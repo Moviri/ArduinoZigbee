@@ -95,8 +95,6 @@ static int zigbee_init(const zb_uint32_t channel_mask, zb_bool_t erase_mem)
 
 static zb_ret_t zigbee_start()
 {
-    zb_bdb_set_legacy_device_support(0);
-
     /** Start Zigbee Stack. */
     zb_ret_t zb_err_code = zboss_start_no_autostart();
     ZB_ERROR_CHECK(zb_err_code);
@@ -171,6 +169,30 @@ void ZigbeeDeviceImplementation::initDeviceContext()
 
 int ZigbeeDeviceImplementation::initDevice()
 {
+    if (m_revision_level_compatibility > 0)
+    {
+        /* R21 devices joining a Zigbee 3.0 centralized network must initiate a TC Link Key update procedure upon
+         * joining the network. This unique TC Link Key is used for all encrypted APS-layer communication instead of
+         * the well-known counterpart. The Node Descriptor packet that is sent during network association procedure
+         * indicates the joining device's Zigbee version. R21 coordinators (acting as a trust center) can be configured
+         * to accept or reject legacy devices that do not initiate the TC Link Key update procedure.
+         *
+         * The following call with argument 1 is required if the Controller does not support revision 21 or later
+         * and will disable "TC link key exchange". However this will make the device not compliant with Zigbee R21 or later.
+         */
+        zb_bdb_set_legacy_device_support(m_revision_level_compatibility < 21 ? 1 : 0);
+    } else {
+        /* Hanlde default compatibility. */
+        /* Enable "TC link key exchange". */
+        zb_bdb_set_legacy_device_support(0);
+    }
+
+    if (m_trust_center_key != nullptr)
+    {
+        zb_zdo_set_tc_standard_distributed_key(m_trust_center_key);
+        zb_zdo_setup_network_as_distributed();
+    }
+
     /* Initialize application context structure. */
     UNUSED_RETURN_VALUE(NRF_LOG_PROCESS());
 
@@ -181,7 +203,7 @@ int ZigbeeDeviceImplementation::initDevice()
     initDeviceContext();
     ZB_AF_REGISTER_DEVICE_CTX(&m_context);
 
-    /* register endpoints callback. */
+    /* Register endpoints callback. */
     for (const ZigbeeEndpoint *endpoint : m_endpoints)
     {
         ZB_AF_SET_ENDPOINT_HANDLER(endpoint->endpointId(), processCommandCallback);
@@ -190,7 +212,7 @@ int ZigbeeDeviceImplementation::initDevice()
     return 1;
 }
 
-ZigbeeDeviceImplementation::ZigbeeDeviceImplementation() : m_trust_center_key(nullptr), m_context({0}), m_erase_persistent_mem(ZB_FALSE)
+ZigbeeDeviceImplementation::ZigbeeDeviceImplementation() : m_trust_center_key(nullptr), m_revision_level_compatibility(0), m_context({0}), m_erase_persistent_mem(ZB_FALSE)
 {
 }
 
@@ -208,6 +230,12 @@ void ZigbeeDeviceImplementation::setTrustCenterKey(unsigned char *key)
     m_trust_center_key = key;
 }
 
+int ZigbeeDeviceImplementation::setZigbeeRevisionLevelCompatibility(unsigned int revision)
+{
+    m_revision_level_compatibility = revision;
+    return 0;
+}
+
 int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
 {
     unsigned int channel_mask = 0;
@@ -223,11 +251,6 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
 
     zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemoryToErase() || isSketchChanged());
-    if (m_trust_center_key != nullptr)
-    {
-        zb_zdo_set_tc_standard_distributed_key(m_trust_center_key);
-        zb_zdo_setup_network_as_distributed();
-    }
 
     initDevice();
 

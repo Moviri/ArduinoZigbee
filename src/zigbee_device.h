@@ -50,6 +50,16 @@ public:
     void setTrustCenterKey(unsigned char *key);
 
     /**
+     * @brief Set the Zigbee Revision Level Compatibility
+     * Notes:
+     * - a revision level below 21 will disable the "Trust Center Link Key update procedure" upon joining the network
+     *
+     * @param[in] revision = a Zigbee revision number
+     * @return 0 if it succeeds.
+     */
+    int setZigbeeRevisionLevelCompatibility(unsigned int revision);
+
+    /**
      * @brief Start Zigbee communication
      * @param[in] channel = the channel to be used for Zigbee communication. If the channel is not set all the channels are used.
      * @return 0 if it succeeds.
@@ -92,7 +102,7 @@ public:
 
     /**
      * @brief Erase peristent memory on startup
-     * 
+     *
      * @param erase = true if we want to erase memory, false otherwise
      */
     void eraseMemory();

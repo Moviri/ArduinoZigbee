@@ -58,6 +58,11 @@ void ZigbeeDevice::setTrustCenterKey(unsigned char *key)
     m_impl->setTrustCenterKey(key);
 }
 
+int setZigbeeRevisionLevelCompatibility(unsigned int revision)
+{
+    return m_impl->setZigbeeRevisionLevelCompatibility(revision);
+}
+
 int ZigbeeDevice::begin(const unsigned int channel)
 {
     return m_impl->begin(std::vector<unsigned int>{channel});
