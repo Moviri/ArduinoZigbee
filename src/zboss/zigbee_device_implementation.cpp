@@ -252,6 +252,8 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
         }
     }
 
+    /* @todo: should we call PalBbInit() ? */
+
     /* Set the protocol to be handled by the radio driver.
      * Notes:
      * - only one protocol can be used at the same time (see PalBbRegisterProtIrq() implementation in pal_bb.c).
@@ -261,6 +263,8 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
 
     /* Register the callback to be called by the driver when the Zigbee protocol is active and an interrupt is received. */
     PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
+
+    /* @todo: should we call PalBbEnable() ? */
 
     zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemoryToErase() || isSketchChanged());
 
@@ -282,6 +286,7 @@ void ZigbeeDeviceImplementation::end()
 {
     /* Inform the radio driver that we are not using Zigbee anymore. */
     PalBbSetProtId(BB_PROT_NONE);
+    /* @todo: should we call PalBbDisable() ? */
 }
 
 void ZigbeeDeviceImplementation::poll()
