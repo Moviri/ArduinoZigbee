@@ -70,10 +70,10 @@ public:
      * @brief Start Zigbee communication.
      *        Example: ZIGBEE.begin({11, 12}); // Enable the communication using channel 11 and 12.
      *
-     * @param[in] channels = the channels to be used for Zigbee communication. If no channel is set all the channels are used.
+     * @param[in] channels = the channels to be used for Zigbee communication.
      * @return 0 if it succeeds.
      */
-    int begin(const std::vector<unsigned int> channels = {});
+    int begin(const std::vector<unsigned int> channels);
 
     /**
      * @brief Stop Zigbee communication
