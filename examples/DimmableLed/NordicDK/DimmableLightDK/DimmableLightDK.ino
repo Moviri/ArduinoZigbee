@@ -21,15 +21,14 @@ ZigbeeDimmableLight light(dimLightCB_1);
 
 void setup() {
   ZIGBEE.addEndpoint(light);
-  /*
-  // If you want to explicitly set the TC_KEY uncomment this section
-
-  // ZLL Commissioning Trust Centre Link Key
-  #define ZB_ZLL_TC_KEY {}; // insert TC_KEY as HEX if known (0xFF, 0xFF, ...)
-  zb_uint8_t zb_zll_tc_key[] = ZB_ZLL_TC_KEY;
+#if 0
+  // If you want to explicitly set the Trust Centre Link Key enable this section
+  uint8_t zb_zll_tc_key[] = {}; // insert TC_KEY as HEX if known (0xFF, 0xFF, ...)
   ZIGBEE.setTrustCenterKey(zb_zll_tc_key);
-  */
-  ZIGBEE.begin(11);
+  ZIGBEE.setZigbeeRevisionLevelCompatibility(20);
+#endif
+  // By default all channels are used.
+  ZIGBEE.begin();
 }
 
 void loop() {

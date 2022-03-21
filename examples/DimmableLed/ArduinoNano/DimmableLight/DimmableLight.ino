@@ -28,12 +28,13 @@ void setup() {
   ZIGBEE.addEndpoint(light1);
   ZIGBEE.addEndpoint(light2);
 #if 0
-  // If you want to explicitly set the Trust Centre Link Key uncomment this section
+  // If you want to explicitly set the Trust Centre Link Key enable this section
   uint8_t zb_zll_tc_key[] = {}; // insert TC_KEY as HEX if known (0xFF, 0xFF, ...)
   ZIGBEE.setTrustCenterKey(zb_zll_tc_key);
   ZIGBEE.setZigbeeRevisionLevelCompatibility(20);
 #endif
-  ZIGBEE.begin(11);
+  // By default all channels are used.
+  ZIGBEE.begin();
 }
 
 void loop() {

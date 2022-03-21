@@ -30,7 +30,8 @@ void setup() {
   ZIGBEE.addEndpoint(temperature_sensor);
   ZIGBEE.setDeviceName("Mixed Endpoint");
 
-  ZIGBEE.begin(11);
+  // By default all channels are used.
+  ZIGBEE.begin();
 }
 
 void loop() {

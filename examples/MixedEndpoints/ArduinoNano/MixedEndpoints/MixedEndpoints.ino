@@ -75,8 +75,9 @@ void setup() {
 
     ZIGBEE.addEndpoint(light);
     ZIGBEE.addEndpoint(temperature_sensor);
-
-    ZIGBEE.begin(11);
+    
+	// By default all channels are used.
+    ZIGBEE.begin();
 }
 
 void loop() {
