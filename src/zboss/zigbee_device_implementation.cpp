@@ -262,7 +262,7 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     PalBbSetProtId(BB_PROT_15P4);
 
     /* Register the callback to be called by the driver when the Zigbee protocol is active and an interrupt is received. */
-    PalBbRegisterProtIrq(BB_PROT_15P4, NULL, nrf_802154_core_irq_handler);
+    PalBbRegisterProtIrq(BB_PROT_15P4, nullptr, nrf_802154_core_irq_handler);
 
     /* @todo: should we call PalBbEnable() ? */
 
@@ -286,7 +286,15 @@ void ZigbeeDeviceImplementation::end()
 {
     /* Inform the radio driver that we are not using Zigbee anymore. */
     PalBbSetProtId(BB_PROT_NONE);
+    PalBbRegisterProtIrq(BB_PROT_15P4, nullptr, nullptr);
     /* @todo: should we call PalBbDisable() ? */
+
+    /* Deregister the callbacks. */
+    ZB_ZCL_REGISTER_DEVICE_CB(nullptr);
+    for (const ZigbeeEndpoint *endpoint : m_endpoints)
+    {
+        ZB_AF_SET_ENDPOINT_HANDLER(endpoint->endpointId(), nullptr);
+    }
 }
 
 void ZigbeeDeviceImplementation::poll()
