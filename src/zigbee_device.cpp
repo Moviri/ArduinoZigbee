@@ -58,7 +58,7 @@ void ZigbeeDevice::setTrustCenterKey(unsigned char *key)
     m_impl->setTrustCenterKey(key);
 }
 
-int setZigbeeRevisionLevelCompatibility(unsigned int revision)
+int ZigbeeDevice::setZigbeeRevisionLevelCompatibility(unsigned int revision)
 {
     return m_impl->setZigbeeRevisionLevelCompatibility(revision);
 }
