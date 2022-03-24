@@ -109,6 +109,7 @@ bool isSketchChanged()
 {
     bool changed = false;
     const uint32_t crc = calc_app_crc32();
+    wait_for_ready();
     if (NRF_UICR->CUSTOMER[kNrfUicrCrcIndex] != crc)
     {
         if (NRF_UICR->CUSTOMER[kNrfUicrCrcIndex] != 0xFFFFFFFF)
@@ -119,9 +120,9 @@ bool isSketchChanged()
             wait_for_ready();
             /* @TODO we could store the values of the other registers and restore it later to prevent the deletion of data written by other libraries. */
             NRF_NVMC->ERASEUICR = NVMC_ERASEUICR_ERASEUICR_Erase;
+            wait_for_ready();
         }
         /* Write the updated CRC. */
-        wait_for_ready();
         NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Wen << NVMC_CONFIG_WEN_Pos;
         wait_for_ready();
         NRF_UICR->CUSTOMER[kNrfUicrCrcIndex] = crc;
