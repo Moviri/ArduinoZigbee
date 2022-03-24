@@ -88,7 +88,7 @@ static int zigbee_init(const zb_uint32_t channel_mask, zb_bool_t erase_mem)
     /* Set static long IEEE address. */
     zb_set_network_router_role(channel_mask);
     zb_set_max_children(MAX_CHILDREN);
-    zigbee_erase_persistent_storage(erase_mem);
+    zb_set_nvram_erase_at_start(erase_mem);
     zb_set_keepalive_timeout(ZB_MILLISECONDS_TO_BEACON_INTERVAL(3000));
     return 1;
 }
