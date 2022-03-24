@@ -268,12 +268,13 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
 
     /* @todo: should we call PalBbEnable() ? */
 
-    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, isMemoryToErase() || isSketchChanged());
+    const bool clear_persistent_memory = isMemoryToErase() || isSketchChanged();
+    zigbee_init((channel_mask == 0) ? ZB_TRANSCEIVER_ALL_CHANNELS_MASK : channel_mask, clear_persistent_memory);
 
     initDevice();
 
     int start_ok = (zigbee_start() == RET_OK) ? 0 : -1;
-    if (!isMemoryToErase() && start_ok == 0)
+    if ((start_ok == 0) && !clear_persistent_memory)
     {
         for (ZigbeeEndpoint *endpoint : m_endpoints)
         {
