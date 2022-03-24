@@ -94,6 +94,16 @@ public:
     int addEndpoint(ZigbeeEndpoint &endpoint);
 
     /**
+     * @brief Perform "Reset with a Local Action" procedure (as described in BDB spec, chapter 9.5).
+     *  The device will perform the NLME leave and clean all Zigbee persistent data except the outgoing NWK
+     *  frame counter and application datasets (if any).
+     *  The reset can be performed at any time once the device is started (see @ref begin()).
+     *
+     * @return 0 if it succeeds.
+     */
+    int leaveNetwork();
+
+    /**
      * @brief Set the Device Name
      *
      * @param model_id = string containing device name

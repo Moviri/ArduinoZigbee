@@ -88,6 +88,11 @@ int ZigbeeDevice::addEndpoint(ZigbeeEndpoint &endpoint)
     return m_impl->addEndpoint(endpoint);
 }
 
+int ZigbeeDevice::leaveNetwork()
+{
+    return m_impl->leaveNetwork();
+}
+
 void ZigbeeDevice::setDeviceName(char model_id[])
 {
     m_impl->setDeviceName(model_id);

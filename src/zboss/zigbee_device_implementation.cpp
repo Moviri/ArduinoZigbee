@@ -187,8 +187,10 @@ int ZigbeeDeviceImplementation::initDevice()
          * and will disable "TC link key exchange". However this will make the device not compliant with Zigbee R21 or later.
          */
         zb_bdb_set_legacy_device_support(m_revision_level_compatibility < 21 ? 1 : 0);
-    } else {
-        /* Hanlde default compatibility. */
+    }
+    else
+    {
+        /* Handle default compatibility. */
         /* Enable "TC link key exchange". */
         zb_bdb_set_legacy_device_support(0);
     }
@@ -308,6 +310,15 @@ void ZigbeeDeviceImplementation::poll()
 int ZigbeeDeviceImplementation::addEndpoint(ZigbeeEndpoint &endpoint)
 {
     m_endpoints.push_back(&endpoint);
+    return 0;
+}
+
+int ZigbeeDeviceImplementation::leaveNetwork()
+{
+    /*  The reset can be performed at any time once the device is started (see @ref zboss_start).
+     *  After the reset, the application will receive the @ref ZB_ZDO_SIGNAL_LEAVE signal.
+     */
+    zb_bdb_reset_via_local_action(0);
     return 0;
 }
 
