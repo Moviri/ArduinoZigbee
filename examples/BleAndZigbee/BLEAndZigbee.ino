@@ -138,7 +138,7 @@ void setup() {
     while (1);
   }
   setDeviceState(DeviceState::BleRunning);
-  Serial.println(("Bluetooth device active, waiting for connections..."));
+  Serial.println("Bluetooth device active, waiting for connections...");
 }
 
 void loop() {
@@ -151,14 +151,13 @@ void loop() {
       break;
     case DeviceState::ZigbeeInit:
       BLE.end();
-      if (setupZigbee() == 0) {
-        Serial.println("starting Zigbee succeeded!");
-        setDeviceState(DeviceState::ZigbeeRunning);
-      } else {
+      if (!setupZigbee()) {
         Serial.println("starting Zigbee failed!");
         // stop here indefinitely
         while (1);
       }
+      Serial.println("starting Zigbee succeeded!");
+      setDeviceState(DeviceState::ZigbeeRunning);
       break;
     case DeviceState::ZigbeeRunning:
       ZIGBEE.poll();
