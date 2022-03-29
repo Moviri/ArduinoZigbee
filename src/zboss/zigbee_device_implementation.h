@@ -25,7 +25,7 @@ public:
      * - a revision level below 21 will disable the "Trust Center Link Key update procedure" upon joining the network
      *
      * @param[in] revision = a Zigbee revision number
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int setZigbeeRevisionLevelCompatibility(unsigned int revision);
 
@@ -34,7 +34,7 @@ public:
      *        Example: ZIGBEE.begin({11, 12}); // Enable the communication using channel 11 and 12.
      *
      * @param[in] channels = the channels to be used for Zigbee communication. If no channel is set all the channels are used.
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int begin(const std::vector<unsigned int> channels = {});
 
@@ -52,7 +52,7 @@ public:
      * @brief Add an endpoint to the local Zigbee device so that it will be managed properly.
      *
      * @param[in] endpoint = the endpoint to be managed
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int addEndpoint(ZigbeeEndpoint &endpoint);
 
@@ -62,7 +62,7 @@ public:
      *  frame counter and application datasets (if any).
      *  The reset can be performed at any time once the device is started (see @ref begin()).
      *
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int leaveNetwork();
 

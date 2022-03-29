@@ -62,7 +62,7 @@ public:
     /**
      * @brief Start Zigbee communication
      * @param[in] channel = the channel to be used for Zigbee communication. If the channel is not set all the channels are used.
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int begin(const unsigned int channel = 0);
 
@@ -71,7 +71,7 @@ public:
      *        Example: ZIGBEE.begin({11, 12}); // Enable the communication using channel 11 and 12.
      *
      * @param[in] channels = the channels to be used for Zigbee communication.
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int begin(const std::vector<unsigned int> channels);
 
@@ -89,7 +89,7 @@ public:
      * @brief Add an endpoint to the local Zigbee device so that it will be managed properly.
      *
      * @param[in] endpoint = the endpoint to be managed
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int addEndpoint(ZigbeeEndpoint &endpoint);
 
@@ -99,7 +99,7 @@ public:
      *  frame counter and application datasets (if any).
      *  The reset can be performed at any time once the device is started (see @ref begin()).
      *
-     * @return 0 if it succeeds.
+     * @return 1 if it succeeds.
      */
     int leaveNetwork();
 

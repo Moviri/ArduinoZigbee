@@ -240,7 +240,7 @@ void ZigbeeDeviceImplementation::setTrustCenterKey(unsigned char *key)
 int ZigbeeDeviceImplementation::setZigbeeRevisionLevelCompatibility(unsigned int revision)
 {
     m_revision_level_compatibility = revision;
-    return 0;
+    return 1;
 }
 
 int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
@@ -259,8 +259,8 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
 
     initDevice();
 
-    int start_ok = (zigbee_start() == RET_OK) ? 0 : -1;
-    if ((start_ok == 0) && !clear_persistent_memory)
+    int start_ok = (zigbee_start() == RET_OK) ? 1 : 0;
+    if ((start_ok == 1) && !clear_persistent_memory)
     {
         for (ZigbeeEndpoint *endpoint : m_endpoints)
         {
@@ -311,7 +311,7 @@ void ZigbeeDeviceImplementation::poll()
 int ZigbeeDeviceImplementation::addEndpoint(ZigbeeEndpoint &endpoint)
 {
     m_endpoints.push_back(&endpoint);
-    return 0;
+    return 1;
 }
 
 int ZigbeeDeviceImplementation::leaveNetwork()
@@ -320,7 +320,7 @@ int ZigbeeDeviceImplementation::leaveNetwork()
      *  After the reset, the application will receive the @ref ZB_ZDO_SIGNAL_LEAVE signal.
      */
     zb_bdb_reset_via_local_action(0);
-    return 0;
+    return 1;
 }
 
 void ZigbeeDeviceImplementation::setDeviceName(char model_id[])
