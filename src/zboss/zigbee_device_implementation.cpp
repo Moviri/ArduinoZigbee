@@ -4,10 +4,14 @@
 
 extern "C"
 {
+#include "nrf_802154.h"
+#include "nrf_radio.h"
+#include "zigbee_helpers.h"
 #include "zboss_api.h"
 #include "zboss_api_addons.h"
 #include "zb_error_handler.h"
 #include "zb_mem_config_med.h"
+#include "zb_transceiver.h"
 }
 
 #include "../zigbee_device.h"
@@ -20,13 +24,6 @@ extern "C"
 
 /** The maximum amount of connected devices. Setting this value to 0 disables association to this device.  */
 #define MAX_CHILDREN 10
-
-extern "C"
-{
-    void nrf_802154_core_irq_handler(void);
-    zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid);
-    zb_void_t zigbee_erase_persistent_storage(zb_bool_t erase);
-}
 
 /**
  * @brief Mandatory function for all applications implemented on the top of ZBOSS stack.
@@ -268,19 +265,32 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
         }
     }
 
+    zb_trans_hw_init();
     /* @todo: should we call PalBbInit() ? */
 
-    /* Set the protocol to be handled by the radio driver.
+    /* Implementation info:
+     * We currently use a couple low level functions provided by Cordio to ensure that the we can switch from BLE to Zigbee and viceversa.
+     * Indeed Cordio supports the registration of different callbacks called by the radio IRQ depending on the currently active protocol.
+     * At the very low level the IRQ calls RADIO_IRQHandler() defined in pal_bb.c that calls the proper function depending on the active protocol.
+     */
+
+    /* Register the function to be called when the Zigbee protocol is active and an interrupt is received. */
+    PalBbRegisterProtIrq(BB_PROT_15P4, nullptr, nrf_802154_radio_irq_handler);
+
+    /* Set the protocol to be handled by Cordio RADIO_IRQHandler().
      * Notes:
      * - only one protocol can be used at the same time (see PalBbRegisterProtIrq() implementation in pal_bb.c).
      * - Zigbee uses 802.15.4 MAC layer.
      */
     PalBbSetProtId(BB_PROT_15P4);
 
-    /* Register the callback to be called by the driver when the Zigbee protocol is active and an interrupt is received. */
-    PalBbRegisterProtIrq(BB_PROT_15P4, nullptr, nrf_802154_core_irq_handler);
-
     /* @todo: should we call PalBbEnable() ? */
+
+    /* Cycle radio peripheral power to guarantee known radio state.
+     * Note that interperability with BLE (through Cordio) is ensured just because Cordio calls PalBbInit().
+     */
+    nrf_radio_power_set(false);
+    nrf_radio_power_set(true);
 
     return start_ok;
 }
@@ -291,6 +301,11 @@ void ZigbeeDeviceImplementation::end()
     PalBbSetProtId(BB_PROT_NONE);
     PalBbRegisterProtIrq(BB_PROT_15P4, nullptr, nullptr);
     /* @todo: should we call PalBbDisable() ? */
+
+    nrf_802154_deinit();
+
+    /* Switch off Radio peripheral. */
+    nrf_radio_power_set(false);
 
     /* Deregister the callbacks. */
     ZB_ZCL_REGISTER_DEVICE_CB(nullptr);
