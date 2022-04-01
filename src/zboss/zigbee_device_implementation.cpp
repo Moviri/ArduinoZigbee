@@ -15,7 +15,7 @@ extern "C"
 #include "zb_error_handler.h"
 #include "zb_mem_config_med.h"
 #ifdef TARGET_SDK_THREAD_ZIGBEE_4_1
-#include "zb_nrf52_transceiver.h"
+#include "mac_nrf52_transceiver.h"
 #else
 #include "zb_transceiver.h"
 #endif
