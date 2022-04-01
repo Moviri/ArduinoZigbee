@@ -4,14 +4,21 @@
 
 extern "C"
 {
+/* Radio driver includes. */
 #include "nrf_802154.h"
 #include "nrf_radio.h"
+/* Nordic Zigbee related includes. */
 #include "zigbee_helpers.h"
+/* Zboss related includes. */
 #include "zboss_api.h"
 #include "zboss_api_addons.h"
 #include "zb_error_handler.h"
 #include "zb_mem_config_med.h"
+#ifdef TARGET_SDK_THREAD_ZIGBEE_4_1
+#include "zb_nrf52_transceiver.h"
+#else
 #include "zb_transceiver.h"
+#endif
 }
 
 #include "../zigbee_device.h"
@@ -264,8 +271,12 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
             endpoint->implementation()->reloadSettingsFromMemory();
         }
     }
-
+#ifdef TARGET_SDK_THREAD_ZIGBEE_4_1
+    zb_transceiver_hw_init();
+#else
     zb_trans_hw_init();
+#endif
+
     /* @todo: should we call PalBbInit() ? */
 
     /* Implementation info:
