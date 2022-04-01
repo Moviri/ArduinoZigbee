@@ -21,6 +21,7 @@
 #define _ARDUINO_ZIGBEE_H_
 
 #include "zigbee_device.h"
+#include "utils/nvram_utils.h"
 #include "endpoints/zigbee_dimmable_light.h"
 #include "endpoints/zigbee_temperature_sensor.h"
 

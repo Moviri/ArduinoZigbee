@@ -107,7 +107,11 @@ static void wait_for_ready()
  */
 bool isSketchChanged()
 {
-    bool changed = false;
+    static bool changed = false;
+    if (changed)
+    {
+        return true;
+    }
     const uint32_t crc = calc_app_crc32();
     wait_for_ready();
     if (NRF_UICR->CUSTOMER[kNrfUicrCrcIndex] != crc)

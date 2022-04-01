@@ -23,7 +23,7 @@ extern "C"
 
 #include "../zigbee_device.h"
 #include "endpoints/zigbee_endpoint_implementation.h"
-#include "nvram_utils.h"
+#include "../utils/nvram_utils.h"
 
 #if !defined ZB_ROUTER_ROLE
 #error Define ZB_ROUTER_ROLE to compile Router source code.
