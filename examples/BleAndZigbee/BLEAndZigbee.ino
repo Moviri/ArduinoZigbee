@@ -170,9 +170,7 @@ unsigned int readNumLights() {
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial);
-
-  delay(1000);
+  while (!Serial && millis()<5000);
 
   if (!isSketchChanged()) {
     g_num_light = readNumLights();
