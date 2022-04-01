@@ -19,6 +19,10 @@
 #include <ArduinoBLE.h>
 #include <ArduinoZigbee.h>
 
+#include "KVStore.h"
+#include "kvstore_global_api.h"
+#include "mbed_error.h"
+
 BLEService setupService("19B10000-E8F2-537E-4F6C-D104768A1214"); // create service
 
 // create switch characteristic and allow remote device to read and write
@@ -31,8 +35,11 @@ enum class DeviceState {
   ZigbeeRunning = 3
 };
 
+static const char kNumLightsKey[] = "/kv/numLights";
+
 unsigned int g_num_light = 0;
 DeviceState g_state = DeviceState::BleInit;
+bool g_skipBLE = false;
 
 void setDeviceState(DeviceState state) {
   g_state = state;
@@ -92,6 +99,11 @@ void setupCharacteristicWritten(BLEDevice central, BLECharacteristic characteris
   Serial.println(" Zigbee lights will be configured");
 
   g_num_light = num_light;
+  int result = kv_set(kNumLightsKey, &g_num_light, sizeof(g_num_light), 0);
+  if (result != MBED_SUCCESS) {
+    Serial.println("Unknown error! Restart device");
+  }
+
   // Change mode to Zigbee
   setDeviceState(DeviceState::ZigbeeInit);
 }
@@ -104,7 +116,7 @@ int setupBle() {
   }
 
   // set the local name peripheral advertises
-  BLE.setLocalName("ZigbeeSetup");
+  BLE.setLocalName("ZigbeeSetupSense");
   // set the UUID for the service this peripheral advertises
   BLE.setAdvertisedService(setupService);
 
@@ -128,17 +140,65 @@ int setupBle() {
   return 1;
 }
 
+unsigned int readNumLights() {
+  unsigned int num_lights = 0;
+
+  int result = kv_get(kNumLightsKey, &num_lights, sizeof(num_lights), 0);
+
+  switch (result)
+  {
+    case MBED_SUCCESS:
+      if (num_lights != 0) {
+        Serial.println("NVRAM read successfully");
+        return num_lights;
+      }
+      else {
+        Serial.println("Number of lights not configured. Please input the desired number using BLE");
+        return 0;
+      }
+      break;
+    case MBED_ERROR_ITEM_NOT_FOUND:
+      Serial.println("Number of lights not configured. Please input the desired number using BLE");
+      return 0;
+      break;
+    default:
+      // Error reading from key-value store.
+      Serial.println("Unknown error! Restart device");
+      while (1);
+  }
+}
+
 void setup() {
   Serial.begin(9600);
   while (!Serial);
 
-  if (!setupBle()) {
-    Serial.println("starting BLE failed!");
-    // stop here indefinitely
-    while (1);
+  delay(1000);
+
+  if (!isSketchChanged()) {
+    g_num_light = readNumLights();
+    if (g_num_light) {
+      setDeviceState(DeviceState::ZigbeeInit);
+      g_skipBLE = true;
+
+      Serial.print("Device is already configured: ");
+      Serial.println(g_num_light);
+    }
   }
-  setDeviceState(DeviceState::BleRunning);
-  Serial.println("Bluetooth device active, waiting for connections...");
+  if (!g_skipBLE) {
+    if (!setupBle()) {
+      Serial.println("starting BLE failed!");
+      // stop here indefinitely
+      while (1);
+    }
+    
+    int result = kv_set(kNumLightsKey, &g_num_light, sizeof(g_num_light), 0);
+    if (result != MBED_SUCCESS) {
+      Serial.println("Unknown error! Restart device");
+    }
+
+    setDeviceState(DeviceState::BleRunning);
+    Serial.println("Bluetooth device active, waiting for connections...");
+  }
 }
 
 void loop() {
@@ -150,7 +210,10 @@ void loop() {
       BLE.poll();
       break;
     case DeviceState::ZigbeeInit:
-      BLE.end();
+      if (!g_skipBLE) {
+        BLE.end();
+      }
+      
       if (!setupZigbee()) {
         Serial.println("starting Zigbee failed!");
         // stop here indefinitely
