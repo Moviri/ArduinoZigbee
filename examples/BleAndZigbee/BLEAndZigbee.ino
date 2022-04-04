@@ -1,3 +1,21 @@
+/*
+  Demo BLE Zigbee
+
+  This example creates a BLE peripheral with a service that contains a
+  characteristic to set up how many leds will be controlled through Zigbee.
+  Once the characteristic has been written to a valid value the BLE communication
+  is switched off and the Zigbee communication is started.
+  The number of led configured through Bluetooth is persistent across reboots.
+
+  The circuit:
+  - Arduino Nano 33 BLE board with Zigbee firmware
+
+  You can use a generic BLE central app, like LightBlue (iOS and Android) or
+  nRF Connect (Android), to interact with the services and characteristics
+  created in this sketch.
+
+  This example code is in the public domain.
+*/
 
 #include <ArduinoZigbee.h>
 #include <ArduinoBLE.h>
