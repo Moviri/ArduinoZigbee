@@ -20,7 +20,14 @@ begin	KEYWORD2
 poll	KEYWORD2
 end	KEYWORD2
 addEndpoint	KEYWORD2
+setTrustCenterKey	KEYWORD2
+setZigbeeRevisionLevelCompatibility	KEYWORD2
+leaveNetwork	KEYWORD2
 setDeviceName	KEYWORD2
+eraseMemory	KEYWORD2
+
+setBrightness	KEYWORD2
+setState	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
