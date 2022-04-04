@@ -5,14 +5,17 @@
 
 void dimLightCB_1(const uint8_t brightness_level) {
   analogWrite(LEDR, 255 - brightness_level);
+  dimmableLightPrintInfo(LEDR, brightness_level);
 }
 
 void dimLightCB_2(const uint8_t brightness_level) {
   analogWrite(LEDG, 255 - brightness_level);
+  dimmableLightPrintInfo(LEDG, brightness_level);
 }
 
 void dimLightCB_3(const uint8_t brightness_level) {
   analogWrite(LEDB, 255 - brightness_level);
+  dimmableLightPrintInfo(LEDB, brightness_level);
 }
 
 ZigbeeDimmableLight light1(dimLightCB_1);
@@ -27,26 +30,36 @@ int setupZigbee()
     ZIGBEE.addEndpoint(*lights[i]);
   }
   // By default all channels are used.
-  return ZIGBEE.begin();	
+  return ZIGBEE.begin();
 }
 
 void setup() {
   Serial.begin(9600);
-  // Wait 5 seconds for the serial to be available
-  while ((!Serial) && (millis() < 5000));
-  
+  // Wait 30 seconds for the serial to be available
+  while ((!Serial) && (millis() < 30000));
+
   if (isConfigured()) {
-    setupZigbee();
+    if (!setupZigbee()) {
+      Serial.println("Starting Zigbee failed!");
+      // stop here indefinitely
+      while (1);
+    }
+    Serial.println("Starting Zigbee succeeded!");
     setSketchState(SketchState::Zigbee);
   }
   else {
-    setupBluetooth();
+    if (!setupBluetooth()) {
+      Serial.println("Starting Bluetooth failed!");
+      // stop here indefinitely
+      while (1);
+    }
+    Serial.println("Bluetooth device active, waiting for connections...");
     setSketchState(SketchState::Bluetooth);
   }
 }
 
 void loop() {
-  switch(sketchState()) {
+  switch (sketchState()) {
     case SketchState::Bluetooth:
       BLE.poll();
       break;

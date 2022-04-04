@@ -2,13 +2,11 @@
 #include <ArduinoBLE.h>
 #include "utils.h"
 
-
 // The Bluetooth service
 BLEService setupService("19B10000-E8F2-537E-4F6C-D104768A1214");
 
 // The Bluetooth characteristic used to setup the number of lights.
 BLEUnsignedCharCharacteristic setupCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite);
-
 
 void blePeripheralConnectHandler(BLEDevice central) {
   // central connected event handler
@@ -36,6 +34,12 @@ void setupCharacteristicWritten(BLEDevice central, BLECharacteristic characteris
 
   setNumLights(num_light);
 
+  if (!setupZigbee()) {
+    Serial.println("Starting Zigbee failed!");
+    // stop here indefinitely
+    while (1);
+  }
+  Serial.println("Starting Zigbee succeeded!");
   setSketchState(SketchState::Zigbee);
 }
 
@@ -48,7 +52,7 @@ int setupBluetooth()
   }
 
   // set the local name peripheral advertises
-  BLE.setLocalName("ZigbeeSetupSense");
+  BLE.setLocalName("SetupArduinoZigbee");
   // set the UUID for the service this peripheral advertises
   BLE.setAdvertisedService(setupService);
 
@@ -69,5 +73,5 @@ int setupBluetooth()
 
   // start advertising
   BLE.advertise();
-  return 1;	
+  return 1;
 }
