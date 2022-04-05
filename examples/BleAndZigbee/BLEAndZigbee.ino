@@ -40,24 +40,6 @@ ZigbeeDimmableLight light1(dimLightCB_1);
 ZigbeeDimmableLight light2(dimLightCB_2);
 ZigbeeDimmableLight light3(dimLightCB_3);
 
-int setupZigbee()
-{
-  ZigbeeDimmableLight* lights[] = {&light1, &light2, &light3};
-  unsigned int num_lights = getNumLights();
-  for (int i = 0; i < num_lights ; i++) {
-    ZIGBEE.addEndpoint(*lights[i]);
-  }
-  // By default all channels are used.
-  int status =  ZIGBEE.begin();
-  if (status) {
-    // Initialize the brightness of the configured devices.
-    for (int i = 0; i < num_lights ; i++) {
-      lights[i]->setBrightness(255);
-    }
-  }
-  return status;
-}
-
 void setup() {
   Serial.begin(9600);
   // Wait 30 seconds for the serial to be available
@@ -92,4 +74,22 @@ void loop() {
       ZIGBEE.poll();
       break;
   }
+}
+
+int setupZigbee()
+{
+  ZigbeeDimmableLight* lights[] = {&light1, &light2, &light3};
+  unsigned int num_lights = getNumLights();
+  for (int i = 0; i < num_lights ; i++) {
+    ZIGBEE.addEndpoint(*lights[i]);
+  }
+  // By default all channels are used.
+  int status =  ZIGBEE.begin();
+  if (status) {
+    // Initialize the brightness of the configured devices.
+    for (int i = 0; i < num_lights ; i++) {
+      lights[i]->setBrightness(255);
+    }
+  }
+  return status;
 }

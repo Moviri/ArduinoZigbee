@@ -11,12 +11,12 @@
 */
 #include <ArduinoZigbee.h>
 
-float tempSensorCB_1() {
+float tempSensorCB() {
   // Put sensor read here
   return float(random(20.0,28.0)); 
 }
 
-ZigbeeTemperatureSensor temperature_sensor(tempSensorCB_1);
+ZigbeeTemperatureSensor temperature_sensor(tempSensorCB);
 
 void setup() {
   ZIGBEE.addEndpoint(temperature_sensor);
