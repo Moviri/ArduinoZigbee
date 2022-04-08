@@ -25,6 +25,17 @@ public:
     zb_ret_t processCommandDV(zb_zcl_device_callback_param_t *cmd_params) override;
 
     /**
+     * @brief To be called after the Zigbee stack has been initialized an before starting the normal operations.
+     * @param[in] load_from_memory = if the status should be loaded from Zigbee stack persistent memory
+     */
+    void begin(bool load_from_memory) override;
+
+    /**
+     * @brief To be called to end operations.
+     */
+    void end() override;
+
+    /**
      * @brief Set the light brightness
      * @param[in] brightness = the brightness level.
      */

@@ -105,7 +105,6 @@ zb_uint8_t ZigbeeDimmableLightImplementation::processCommandEP(zb_bufid_t bufid,
         cmd_params->cmd_id == ZB_ZCL_CMD_ON_OFF_OFF_WITH_EFFECT_ID)
     {
         setState((zb_bool_t) false);
-
         return ZB_TRUE;
     }
     return ZB_FALSE;
@@ -126,13 +125,59 @@ zb_ret_t ZigbeeDimmableLightImplementation::processCommandDV(zb_zcl_device_callb
             return (result == ZB_TRUE) ? RET_OK : RET_ERROR;
         }
     case ZB_ZCL_IDENTIFY_EFFECT_CB_ID:
-    {
         onIdentify(&cmd_params->cb_param.identify_effect_value_param);
         return RET_OK;
-    }
     default:
         return RET_ERROR;
     }
+}
+
+void ZigbeeDimmableLightImplementation::begin(bool load_from_memory)
+{
+    m_started = true;
+    interface()->m_write_brightness(m_zboss_data.on_off_attr.on_off ? m_zboss_data.level_control_attr.current_level : 0);
+}
+
+void ZigbeeDimmableLightImplementation::end()
+{
+    m_started = false;
+}
+
+void ZigbeeDimmableLightImplementation::setBrightness(zb_uint8_t value)
+{
+    if (m_started)
+    {
+        ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
+                             ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
+                             ZB_ZCL_CLUSTER_SERVER_ROLE,
+                             ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
+                             (zb_uint8_t *)&value,
+                             ZB_FALSE);
+    }
+    else
+    {
+        m_zboss_data.level_control_attr.current_level = value;
+    }
+
+    interface()->m_write_brightness(m_zboss_data.on_off_attr.on_off ? m_zboss_data.level_control_attr.current_level : 0);
+}
+
+void ZigbeeDimmableLightImplementation::setState(zb_bool_t value)
+{
+    if (m_started)
+    {
+        ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
+                             ZB_ZCL_CLUSTER_ID_ON_OFF,
+                             ZB_ZCL_CLUSTER_SERVER_ROLE,
+                             ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
+                             (zb_uint8_t *)&value,
+                             ZB_FALSE);
+    }
+    else
+    {
+        m_zboss_data.on_off_attr.on_off = value;
+    }
+    interface()->m_write_brightness(m_zboss_data.on_off_attr.on_off ? m_zboss_data.level_control_attr.current_level : 0);
 }
 
 zb_uint8_t ZigbeeDimmableLightImplementation::setAttribute(zb_zcl_set_attr_value_param_t *attr_p)
@@ -143,8 +188,7 @@ zb_uint8_t ZigbeeDimmableLightImplementation::setAttribute(zb_zcl_set_attr_value
         if (attr_p->attr_id == ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID)
         {
             // ON - OFF management
-            uint8_t value = attr_p->values.data8;
-            setState((zb_bool_t)value);
+            setState((zb_bool_t)attr_p->values.data8);
             return ZB_TRUE;
         }
         break;
@@ -152,53 +196,11 @@ zb_uint8_t ZigbeeDimmableLightImplementation::setAttribute(zb_zcl_set_attr_value
         if (attr_p->attr_id == ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID)
         {
             // Level management
-            uint16_t value = attr_p->values.data16;
-            setBrightness(value);
+            setBrightness(attr_p->values.data16);
             return ZB_TRUE;
         }
         break;
     default:;
     }
-    /* Other clusters can be processed here */
-    NRF_LOG_INFO("Unhandled cluster attribute id: %d", attr_p->cluster_id);
     return ZB_FALSE;
-}
-
-void ZigbeeDimmableLightImplementation::setBrightness(zb_uint8_t value)
-{
-    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
-                         ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
-                         ZB_ZCL_CLUSTER_SERVER_ROLE,
-                         ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
-                         (zb_uint8_t *)&value,
-                         ZB_FALSE);
-
-    zb_uint8_t value_onoff = (value == 0) ? ZB_FALSE : ZB_TRUE;
-    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
-                         ZB_ZCL_CLUSTER_ID_ON_OFF,
-                         ZB_ZCL_CLUSTER_SERVER_ROLE,
-                         ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
-                         &value_onoff,
-                         ZB_FALSE);
-
-    interface()->m_write_brightness(value);
-}
-
-void ZigbeeDimmableLightImplementation::setState(zb_bool_t value)
-{
-    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
-                         ZB_ZCL_CLUSTER_ID_ON_OFF,
-                         ZB_ZCL_CLUSTER_SERVER_ROLE,
-                         ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
-                         (zb_uint8_t *)&value,
-                         ZB_FALSE);
-
-    if (value)
-    {
-        setBrightness(m_zboss_data.level_control_attr.current_level);
-    }
-    else
-    {
-        interface()->m_write_brightness(0);
-    }
 }
