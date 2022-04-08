@@ -109,8 +109,13 @@ void ZigbeeTemperatureSensorImplementation::update()
                                                      ZB_FALSE);
 }
 
-void ZigbeeTemperatureSensorImplementation::reloadSettingsFromMemory()
+void ZigbeeTemperatureSensorImplementation::begin(bool load_from_memory)
 {
+	m_started = true;
+    if (!load_from_memory)
+    {
+        return;
+    }
     // Read reporting period from Zboss dedicated memory that in this case is m_zboss_data.reporting_infotemperature_sensor[0]
     m_interface->m_period = zb_zcl_find_reporting_info(m_endpoint_id,
                                                        ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT,

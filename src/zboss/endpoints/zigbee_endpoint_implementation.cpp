@@ -7,7 +7,9 @@ static const char kZigbeeDate[] = "20210911";
 
 uint8_t ZigbeeEndpointImplementation::m_ep_id_counter = 0;
 
-ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(ZigbeeEndpoint *interface, const char model_id[], unsigned int power_source_type) : m_interface(interface), m_endpoint_id(++m_ep_id_counter)
+ZigbeeEndpointImplementation::ZigbeeEndpointImplementation(ZigbeeEndpoint *interface, const char model_id[], unsigned int power_source_type) : m_interface(interface),
+                                                                                                                                               m_started(false),
+                                                                                                                                               m_endpoint_id(++m_ep_id_counter)
 {
     /* WARNING: do not use the interface object inside this constructor because it is not fully constructed. */
     memset(&m_zboss_basic_data, 0, sizeof(m_zboss_basic_data));
@@ -126,8 +128,14 @@ zb_ret_t ZigbeeEndpointImplementation::processCommandDV(zb_zcl_device_callback_p
     return RET_ERROR;
 }
 
-void ZigbeeEndpointImplementation::reloadSettingsFromMemory()
+void ZigbeeEndpointImplementation::begin(bool load_from_memory)
 {
+	m_started = true;
+}
+
+void ZigbeeEndpointImplementation::end()
+{
+	m_started = false;
 }
 
 void ZigbeeEndpointImplementation::onIdentify(zb_zcl_identify_effect_value_param_t *idt_params)

@@ -21,7 +21,7 @@ public:
 
     zb_uint8_t processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params) override;
     void update() override;
-    void reloadSettingsFromMemory() override;
+    void begin(bool load_from_memory) override;
     void onLeave() override;
 
 private:
@@ -50,6 +50,7 @@ private:
         zb_af_endpoint_desc_t temperature_sensor;
     } ZbossSpecificData;
 
+    /** Zigbee Zboss stack endpoint specific data */
     ZbossSpecificData m_zboss_data;
 };
 

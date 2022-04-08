@@ -74,6 +74,7 @@ private:
         zb_af_endpoint_desc_t dimmable_light_ep;
     } ZbossSpecificData;
 
+    /** Zigbee Zboss stack endpoint specific data */
     ZbossSpecificData m_zboss_data;
 };
 

@@ -264,11 +264,12 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
     initDevice();
 
     int start_ok = (zigbee_start() == RET_OK) ? 1 : 0;
-    if ((start_ok == 1) && !clear_persistent_memory)
+    if ((start_ok == 1))
     {
+        bool load_from_memory = !clear_persistent_memory;
         for (ZigbeeEndpoint *endpoint : m_endpoints)
         {
-            endpoint->implementation()->reloadSettingsFromMemory();
+            endpoint->implementation()->begin(load_from_memory);
         }
     }
 #ifdef TARGET_SDK_THREAD_ZIGBEE_4_1
@@ -308,6 +309,10 @@ int ZigbeeDeviceImplementation::begin(const std::vector<unsigned int> channels)
 
 void ZigbeeDeviceImplementation::end()
 {
+    for (ZigbeeEndpoint *endpoint : m_endpoints)
+    {
+        endpoint->implementation()->end();
+    }
     /* Inform the radio driver that we are not using Zigbee anymore. */
     PalBbSetProtId(BB_PROT_NONE);
     PalBbRegisterProtIrq(BB_PROT_15P4, nullptr, nullptr);

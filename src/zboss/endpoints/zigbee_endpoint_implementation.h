@@ -18,12 +18,23 @@ protected:
 public:
     /** Periodic endpoint update. */
     virtual void update();
+
     /** Handle a command received from the Zboss stack. */
     virtual zb_uint8_t processCommandEP(zb_bufid_t bufid, zb_zcl_parsed_hdr_t *cmd_params);
+
     /** Callback for ep specific events */
     virtual zb_ret_t processCommandDV(zb_zcl_device_callback_param_t *cmd_params);
-    /** Called to restore settings from memory */
-    virtual void reloadSettingsFromMemory();
+
+    /**
+     * @brief To be called after the Zigbee stack has been initialized an before starting the normal operations.
+     * @param[in] load_from_memory = if the status should be loaded from Zigbee stack persistent memory
+     */
+    virtual void begin(bool load_from_memory);
+
+    /**
+     * @brief To be called to end operations.
+     */
+    virtual void end();
 
     /** Identify signal handler */
     virtual void onIdentify(zb_zcl_identify_effect_value_param_t *idt_params);
@@ -63,12 +74,18 @@ protected:
 
     /** Endpoint identifier: from 1 to 244. */
     const uint8_t m_endpoint_id;
+
     /** Endpoint description for user applications */
     zb_af_endpoint_desc_t *m_endpoint_descriptor;
 
+    /** Zigbee Zboss stack endpoint basic data */
     ZbossData m_zboss_basic_data;
+
     /** Backpointer to the visible object. */
     ZigbeeEndpoint *const m_interface;
+
+    /** Set to true if the Zigbee endpoint communication is active. */
+    bool m_started;
 
 private:
     /** [1, 240] Endpoint ID counter for automatic endpoint ID generation */
