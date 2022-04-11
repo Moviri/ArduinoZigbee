@@ -153,6 +153,15 @@ void ZigbeeDimmableLightImplementation::setBrightness(zb_uint8_t value)
                              ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
                              (zb_uint8_t *)&value,
                              ZB_FALSE);
+
+        /* According to the table 7.3 of Home Automation Profile Specification v 1.2 rev 29, chapter 7.1.3. */
+        zb_uint8_t on_off_value = value == 0 ? ZB_FALSE : ZB_TRUE;
+        ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
+                             ZB_ZCL_CLUSTER_ID_ON_OFF,
+                             ZB_ZCL_CLUSTER_SERVER_ROLE,
+                             ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
+                             &on_off_value,
+                             ZB_FALSE);
     }
     else
     {
