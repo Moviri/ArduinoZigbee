@@ -37,7 +37,7 @@ public:
 
     /**
      * @brief Set the light brightness
-     * @param[in] brightness = the brightness level.
+     * @param[in] brightness = the brightness level, allowed values 0 ... 255, 0 - turn off, 255 - full brightness.
      */
     void setBrightness(zb_uint8_t brightness);
     /**
