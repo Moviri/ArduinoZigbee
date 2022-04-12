@@ -2,9 +2,15 @@
 
 Enable Zigbee support on the Arduino Nano 33 BLE.
 
-This library supports creating Zigbee devices.
+This library supports creating Zigbee devices with multiple end points that implement the **Zigbee Home Automation profile**.
 
-It requires ArduinoCore-mbed with the specific variant ARDUINO_NANO33ZIGBEE.
+It requires ArduinoCore-mbed with the specific variant `ARDUINO_NANO33ZIGBEE`.  
+At the moment this variant is available on the branch `nordic-zigbee-support` of https://github.com/Moviri/ArduinoCore-mbed/.
+
+## Implemented Home Automation profile devices
+
+- Dimmable Light
+- Temperature Sensor
 
 ## License
 
