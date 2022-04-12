@@ -11,6 +11,7 @@ At the moment this variant is available on the branch `nordic-zigbee-support` of
 
 - Dimmable Light
 - Temperature Sensor
+- Dimmable switch : partial untested support available on branch `feature/dimmable_switch`
 
 ## Implementation notes
 
