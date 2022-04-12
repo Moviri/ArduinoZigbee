@@ -84,12 +84,5 @@ int setupZigbee()
     ZIGBEE.addEndpoint(*lights[i]);
   }
   // By default all channels are used.
-  int status =  ZIGBEE.begin();
-  if (status) {
-    // Initialize the brightness of the configured devices.
-    for (int i = 0; i < num_lights ; i++) {
-      lights[i]->setBrightness(255);
-    }
-  }
-  return status;
+  return ZIGBEE.begin();
 }
