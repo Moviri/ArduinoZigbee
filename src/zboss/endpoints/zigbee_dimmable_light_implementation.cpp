@@ -135,6 +135,19 @@ zb_ret_t ZigbeeDimmableLightImplementation::processCommandDV(zb_zcl_device_callb
 void ZigbeeDimmableLightImplementation::begin(bool load_from_memory)
 {
     m_started = true;
+    /* Ensure that Zigbee stack is updated with the current values. */
+    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
+                         ZB_ZCL_CLUSTER_ID_LEVEL_CONTROL,
+                         ZB_ZCL_CLUSTER_SERVER_ROLE,
+                         ZB_ZCL_ATTR_LEVEL_CONTROL_CURRENT_LEVEL_ID,
+                         (zb_uint8_t *)&m_zboss_data.level_control_attr.current_level,
+                         ZB_FALSE);
+    ZB_ZCL_SET_ATTRIBUTE(m_endpoint_id,
+                         ZB_ZCL_CLUSTER_ID_ON_OFF,
+                         ZB_ZCL_CLUSTER_SERVER_ROLE,
+                         ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID,
+                         &m_zboss_data.on_off_attr.on_off,
+                         ZB_FALSE);
     interface()->m_write_brightness(m_zboss_data.on_off_attr.on_off ? m_zboss_data.level_control_attr.current_level : 0);
 }
 
