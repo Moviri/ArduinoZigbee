@@ -1,13 +1,17 @@
 # How to add new devices
-This library leverages the *nRF5 SDK for Thread and Zigbee v4.2.0* to implement Zigbee functionalities. To adapt the SDK to the Arduino world, some macros provided by the SDK have been expanded and added directly to the code.  
-To add a new device to the library, the fastest way is to take the SDK examples and export the preprocessor output, to see the device initialization expanded without macro. To do so a great tool is Segger Embedded Studio.  
+
+This library leverages the *nRF5 SDK for Thread and Zigbee v4.2.0* to implement Zigbee functionalities.
+
+To adapt the SDK to the Arduino world, some macros provided by the SDK have been expanded and added directly to the code.   
+To add a new device to the library, the fastest way is to take the SDK examples and export the preprocessor output, to see the device initialization code expanded without macro. To do so a great tool is Segger Embedded Studio.
+
 The structures defining the device can be transposed to our library following the schema of other devices (e.g. Dimmable Light). 
 The major structures to copy are:
 - Device attribute list
 - Device cluster list
 - Device simple descriptor
 
-These structures are splitted between
+These structures are split between:
 - zigbee_\<device>_implementation.h (Definition)
   - zb_af_simple_desc_\<device>
   - ZbossSpecificData

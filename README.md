@@ -12,6 +12,10 @@ At the moment this variant is available on the branch `nordic-zigbee-support` of
 - Dimmable Light
 - Temperature Sensor
 
+## Implementation notes
+
+See [Zboss endpoints README](src/zboss/endpoints/README.md) for some implementation details that can be useful to add support for other Home Automation devices.
+
 ## License
 
 ```
